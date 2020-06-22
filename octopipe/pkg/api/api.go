@@ -33,7 +33,11 @@ const (
 )
 
 func NewAPI() *API {
+	tracer.Start(tracer.WithDebugMode(true))
+	defer tracer.Stop()
+
 	router := gin.Default()
+	router.Use(gintrace.Middleware("octopipe"))
 
 	v1 := router.Group(v1Path)
 	v1.GET("/health", health)
@@ -45,8 +49,5 @@ func health(context *gin.Context) {
 }
 
 func (api *API) Start() {
-	tracer.Start(tracer.WithAnalytics(true))
-	defer tracer.Stop()
-	api.router.Use(gintrace.Middleware("octopipe"))
 	api.router.Run(":8080")
 }
