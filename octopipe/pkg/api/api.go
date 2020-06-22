@@ -18,7 +18,6 @@ package api
 
 import (
 	gintrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gin-gonic/gin"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,9 +32,6 @@ const (
 )
 
 func NewAPI() *API {
-	tracer.Start(tracer.WithDebugMode(true))
-	defer tracer.Stop()
-
 	router := gin.Default()
 	router.Use(gintrace.Middleware("octopipe"))
 

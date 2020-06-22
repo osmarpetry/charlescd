@@ -29,11 +29,15 @@ import (
 	"octopipe/pkg/template"
 
 	"github.com/joho/godotenv"
+	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 func main() {
+	tracer.Start(tracer.WithDebugMode(true))
+	defer tracer.Stop()
+
 	if err := godotenv.Load(); err != nil {
 		log.Print("No .env file found")
 	}
