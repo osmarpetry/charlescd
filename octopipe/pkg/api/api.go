@@ -45,7 +45,7 @@ func health(context *gin.Context) {
 }
 
 func (api *API) Start() {
-	tracer.Start()
+	tracer.Start(tracer.WithAnalytics(true))
 	defer tracer.Stop()
 	api.router.Use(gintrace.Middleware("octopipe"))
 	api.router.Run(":8080")
