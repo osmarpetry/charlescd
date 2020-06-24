@@ -35,7 +35,7 @@ import (
 )
 
 func main() {
-	tracer.Start(tracer.WithDebugMode(true))
+	tracer.Start()
 	defer tracer.Stop()
 
 	if err := godotenv.Load(); err != nil {
