@@ -24,12 +24,17 @@ services:
 
   app:
     image: node:12.17.0-alpine3.9
+    labels:
+        com.datadoghq.ad.logs: '[{"source": "nodejs", "service": "app"}]'
     depends_on:
       - stubby4j
+      - postgres
     volumes:
-    - ./:/app
-    working_dir: /app
-    command: sh -c 'while sleep 3600; do :; done'
+    - ./:/butler
+    working_dir: /butler
+    command: npm run start:dev
+    ports:
+    - 3000:3000
     environment:
         DATABASE_HOST: postgres
         MOOVE_URL: http://stubby4j:8883/moove
@@ -41,3 +46,24 @@ services:
         HELM_TEMPLATE_URL: http://stubby4j:8883/helm
         HELM_PREFIX_URL: http://stubby4j:8883/helm
         OCTOPIPE_URL: http://stubby4j:8883/octopipe
+        DD_TRACE_ANALYTICS_ENABLED: "true"
+        DD_AGENT_HOST: datadog
+        DD_TRACE_AGENT_PORT: 8126
+        DD_LOGS_ENABLED: "true"
+  datadog:
+    links:
+      - app
+    image: datadog/agent:latest
+    ports:
+      - "127.0.0.1:8126:8126"
+    environment:
+      DD_BIND_HOST: 0.0.0.0
+      DD_API_KEY: 34f03877e54a1cb1462706275b5d9b1f
+      DD_LOGS_ENABLED: "true"
+      DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL: "true"
+      DD_CONTAINER_EXCLUDE: "name:datadog"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /opt/datadog-agent/run:/opt/datadog-agent/run:rw
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
