@@ -10,7 +10,8 @@ require (
 	github.com/aws/aws-sdk-go v1.30.4
 	github.com/cyphar/filepath-securejoin v0.2.2 // indirect
 	github.com/fatih/color v1.9.0
-	github.com/gin-gonic/gin v1.5.0
+	github.com/gin-contrib/pprof v1.3.0
+	github.com/gin-gonic/gin v1.6.2
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/google/uuid v1.1.1
 	github.com/huandu/xstrings v1.3.0 // indirect
@@ -19,11 +20,13 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/lib/pq v1.3.0 // indirect
-	github.com/mpentracing/opentracing-go v1.1.0 // indirect
+	github.com/mitchellh/copystructure v1.0.0 // indirect
+	github.com/opentracing/opentracing-go v1.1.0 // indirect
 	github.com/philhofer/fwd v1.0.0 // indirect
 	github.com/stretchr/testify v1.5.1
 	github.com/tidwall/sjson v1.1.1
 	github.com/tinylib/msgp v1.1.2 // indirect
+	go.mongodb.org/mongo-driver v1.3.4
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
 	golang.org/x/sys v0.0.0-20200523222454-059865788121 // indirect

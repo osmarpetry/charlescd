@@ -19,6 +19,7 @@ package api
 import (
 	gintrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gin-gonic/gin"
 
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 )
 
@@ -45,5 +46,6 @@ func health(context *gin.Context) {
 }
 
 func (api *API) Start() {
+	pprof.Register(api.router)
 	api.router.Run(":8080")
 }
