@@ -19,14 +19,11 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/lib/pq v1.3.0 // indirect
-	github.com/mattn/go-colorable v0.1.6 // indirect
-	github.com/mitchellh/copystructure v1.0.0 // indirect
-	github.com/opentracing/opentracing-go v1.1.0 // indirect
+	github.com/mpentracing/opentracing-go v1.1.0 // indirect
 	github.com/philhofer/fwd v1.0.0 // indirect
 	github.com/stretchr/testify v1.5.1
 	github.com/tidwall/sjson v1.1.1
 	github.com/tinylib/msgp v1.1.2 // indirect
-	go.mongodb.org/mongo-driver v1.3.1
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
 	golang.org/x/sys v0.0.0-20200523222454-059865788121 // indirect
