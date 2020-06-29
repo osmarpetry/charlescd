@@ -6,7 +6,7 @@ WORKDIR /usr/share/nginx/html
 
 COPY build .
 
-COPY .env .
+# COPY .env .
 
 COPY env-writer.js .
 
