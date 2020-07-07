@@ -22,6 +22,8 @@ import Text from 'core/components/Text';
 import { Deployment, Circle } from 'modules/Circles/interfaces/Circle';
 import Styled from '../styled';
 import { useCirclePolling } from 'modules/Circles/hooks';
+import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
+import { isBusy } from '../helpers';
 
 interface Props {
   onClickCreate: (
@@ -31,7 +33,7 @@ interface Props {
 }
 
 const LayerRelease = ({ circle, onClickCreate }: Props) => {
-  const [deployStatus, setDeployStatus] = useState('');
+  const [deployStatus, setDeployStatus] = useState<DEPLOYMENT_STATUS>();
   const [deployment, setDeployment] = useState<Deployment>(null);
   const { pollingCircle, status, response } = useCirclePolling();
   const delay = 15000;
@@ -52,7 +54,7 @@ const LayerRelease = ({ circle, onClickCreate }: Props) => {
 
   useEffect(() => {
     let timeout = 0;
-    if (deployStatus === 'DEPLOYING' || deployStatus === 'UNDEPLOYING') {
+    if (isBusy(deployStatus)) {
       timeout = setTimeout(() => {
         pollingCircle(circle?.id);
       }, delay);
