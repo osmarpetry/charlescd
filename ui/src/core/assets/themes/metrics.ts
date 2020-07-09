@@ -28,7 +28,8 @@ import {
   COLOR_MALACHITE,
   COLOR_BLACK_MARLIN,
   COLOR_SANTAS_GREY,
-  COLOR_PAYNES_GREY
+  COLOR_PAYNES_GREY,
+  COLOR_BASTILLE
 } from 'core/assets/colors';
 
 export const light = {};
@@ -60,5 +61,8 @@ export const dark = {
       ok: COLOR_SANTAS_GREY,
       success: COLOR_MALACHITE
     }
+  },
+  dashboard: {
+    card: COLOR_BASTILLE
   }
 };
