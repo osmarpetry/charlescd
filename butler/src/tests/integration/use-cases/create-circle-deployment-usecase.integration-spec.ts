@@ -192,7 +192,9 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       relations: ['components']
     })
 
-    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest).set('x-circle-id', '12345').expect(201)
+    const spyModule = jest.spyOn(modulesRepository,'save')
+
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).set('x-circle-id', '12345').expect(201)
 
     const moduleEntityUpdated = await modulesRepository.findOneOrFail({
       where :{ id: '23776617-7840-4819-b356-30e165b7ebb9' },
@@ -206,11 +208,65 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
       fail('Deployment entity was not saved')
     }
+    expect(spyModule).toBeCalled()
     expect(moduleEntity.components.length).not.toEqual(moduleEntityUpdated.components.length)
     expect(moduleEntity.components.length).toBe(1)
     expect(moduleEntityUpdated.components.length).toBe(2)
     expect(moduleEntityUpdated.components[0].id).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
     expect(moduleEntityUpdated.components[1].id).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
+    expect(deployment.modules[0].components[0].componentId).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
+    expect(deployment.modules[0].components[1].componentId).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
+  })
+
+  it('/POST deployments/circle should not do upsert if module doesnt have new components', async() => {
+    const createDeploymentRequest = {
+      deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
+      applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
+      modules: [
+        {
+          moduleId: 'e2c937cb-d77e-48db-b1ea-7d3df16fd02c',
+          helmRepository: 'helm-repository.com',
+          components: [
+            {
+              componentId: 'c41f029d-186c-4097-ad43-1b344b2e8041',
+              componentName: 'component-name',
+              buildImageUrl: 'image-url',
+              buildImageTag: 'image-tag'
+            },
+          ]
+        }
+      ],
+      authorId: 'author-id',
+      description: 'Deployment from Charles C.D.',
+      callbackUrl: 'http://localhost:8883/moove',
+      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      circle: {
+        headerValue: 'circle-header'
+      }
+    }
+    const moduleEntity = await modulesRepository.findOneOrFail({
+      where :{ id: 'e2c937cb-d77e-48db-b1ea-7d3df16fd02c' },
+      relations: ['components']
+    })
+    const spyModuleSave = jest.spyOn(modulesRepository,'save')
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).set('x-circle-id', '12345').expect(201)
+
+    const moduleEntityAfterRequest = await modulesRepository.findOneOrFail({
+      where :{ id: 'e2c937cb-d77e-48db-b1ea-7d3df16fd02c' },
+      relations: ['components']
+    })
+    const deployment = await deploymentsRepository.findOne(
+      { id: createDeploymentRequest.deploymentId },
+      { relations: ['modules', 'modules.components'] }
+    )
+    if (!deployment) {
+
+      fail('Deployment entity was not saved')
+    }
+    expect(spyModuleSave).not.toBeCalled()
+    expect(moduleEntityAfterRequest.components.length).not.toEqual(createDeploymentRequest.modules[0].components.length)
+    expect(moduleEntityAfterRequest.components.length).toEqual(moduleEntity.components.length)
+    expect(moduleEntityAfterRequest.components[0].id).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
     expect(deployment.modules[0].components[0].componentId).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
     expect(deployment.modules[0].components[1].componentId).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
   })

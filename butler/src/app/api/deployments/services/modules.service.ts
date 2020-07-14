@@ -41,7 +41,8 @@ export class ModulesService {
     const newComponents: ComponentEntity[] = moduleEntity.components.filter(
       componentCompare => !module?.components.some(component=>component.id === componentCompare.id )
     )
-
+    console.log(module)
+    console.log(newComponents)
     if (module && newComponents.length === 0) {
       return
     }
