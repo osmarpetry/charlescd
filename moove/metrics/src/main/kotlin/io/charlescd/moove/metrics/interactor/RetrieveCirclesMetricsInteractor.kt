@@ -14,24 +14,11 @@
  * limitations under the License.
  */
 
-export interface DeployMetricData {
-  successfulDeployments: number;
-  failedDeployments: number;
-  successfulDeploymentsAverageTime: number;
-  successfulDeploymentsInPeriod: MetricDataInPeriod[];
-  failedDeploymentsInPeriod: MetricDataInPeriod[];
-  deploymentsAverageTimeInPeriod: MetricDataInPeriod[];
-}
+package io.charlescd.moove.metrics.interactor
 
-export interface MetricDataInPeriod {
-  total?: number;
-  averageTime: number;
-  period: string;
-}
+import io.charlescd.moove.metrics.api.response.CirclesMetricsRepresentation
 
-export enum PERIOD_PARAM {
-  ONE_WEEK = 'ONE_WEEK',
-  TWO_WEEKS = 'TWO_WEEKS',
-  ONE_MONTH = 'ONE_MONTH',
-  THREE_MONTHS = 'THREE_MONTHS'
+interface RetrieveCirclesMetricsInteractor {
+
+    fun execute(workspaceId: String): CirclesMetricsRepresentation
 }

@@ -14,25 +14,88 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import Text from 'core/components/Text';
+import HistoryComponent from './History';
+import Loader from '../Loaders/index';
+import { useCirclesMetric } from './hooks';
 import Styled from './styled';
 
 const Circles = () => {
+  const { findAllCirclesData, response, loading } = useCirclesMetric();
+  const [name, setName] = useState('');
+  const totalCircles =
+    response?.circleStats?.active + response?.circleStats?.inactive;
+
+  useEffect(() => {
+    findAllCirclesData({ name: name });
+  }, [findAllCirclesData, name]);
+
   return (
-    <Styled.Content>
-      <Styled.MiniCard>
-        <span>Circle 1</span>
-      </Styled.MiniCard>
-      <Styled.MiniCard>
-        <span>Circle 2</span>
-      </Styled.MiniCard>
-      <Styled.MiniCard>
-        <span>Circle 3</span>
-      </Styled.MiniCard>
-      <Styled.Chart>
-        <span>Circle 4</span>
-      </Styled.Chart>
-    </Styled.Content>
+    <>
+      <Styled.Content data-testid="metrics-circles">
+        <Styled.MiniCard>
+          {loading ? (
+            <Loader.CircleCard />
+          ) : (
+            <>
+              <Styled.CirclesData color="light">
+                {`${totalCircles}`}
+              </Styled.CirclesData>
+              <Styled.CirclesDataDetail>
+                <Text.h4 color="light">
+                  Actives: {response?.circleStats?.active}
+                </Text.h4>
+                <Text.h4 color="light">
+                  Inactives: {response?.circleStats?.inactive}
+                </Text.h4>
+              </Styled.CirclesDataDetail>
+            </>
+          )}
+        </Styled.MiniCard>
+        <Styled.MiniCard>
+          <Styled.CirclesData>
+            <Text.h4 color="light">Average life time</Text.h4>
+            <Text.h1 color="light">
+              {loading ? (
+                <Loader.CircleAverageTime />
+              ) : (
+                `${response?.averageCircleLifeTime} days`
+              )}
+            </Text.h1>
+          </Styled.CirclesData>
+        </Styled.MiniCard>
+      </Styled.Content>
+      <Styled.Content>
+        <Styled.HistoryWrapper>
+          <Styled.HistoryHeader>
+            <Text.h2 color="light" weight="bold">
+              History
+            </Text.h2>
+            <Styled.HistorySearchInput
+              resume
+              onSearch={setName}
+              placeholder={'Search circle'}
+            />
+          </Styled.HistoryHeader>
+          {loading ? (
+            <Loader.Legend />
+          ) : (
+            <Styled.HistoryLegend>
+              <Styled.Dot active={true} />
+              <Text.h5 color="dark">
+                Active: {response?.circleStats?.active}
+              </Text.h5>
+              <Styled.Dot active={false} />
+              <Text.h5 color="dark">
+                Inactive: {response?.circleStats?.inactive}
+              </Text.h5>
+            </Styled.HistoryLegend>
+          )}
+          <HistoryComponent data={response?.history} loading={loading} />
+        </Styled.HistoryWrapper>
+      </Styled.Content>
+    </>
   );
 };
 
