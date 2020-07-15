@@ -14,24 +14,9 @@
  * limitations under the License.
  */
 
-export interface DeployMetricData {
-  successfulDeployments: number;
-  failedDeployments: number;
-  successfulDeploymentsAverageTime: number;
-  successfulDeploymentsInPeriod: MetricDataInPeriod[];
-  failedDeploymentsInPeriod: MetricDataInPeriod[];
-  deploymentsAverageTimeInPeriod: MetricDataInPeriod[];
-}
+package io.charlescd.moove.domain
 
-export interface MetricDataInPeriod {
-  total?: number;
-  averageTime: number;
-  period: string;
-}
-
-export enum PERIOD_PARAM {
-  ONE_WEEK = 'ONE_WEEK',
-  TWO_WEEKS = 'TWO_WEEKS',
-  ONE_MONTH = 'ONE_MONTH',
-  THREE_MONTHS = 'THREE_MONTHS'
-}
+data class CircleMetric(
+    val total: Int,
+    val circleStatus: CircleStatusEnum
+)

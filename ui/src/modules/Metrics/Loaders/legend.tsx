@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-export interface DeployMetricData {
-  successfulDeployments: number;
-  failedDeployments: number;
-  successfulDeploymentsAverageTime: number;
-  successfulDeploymentsInPeriod: MetricDataInPeriod[];
-  failedDeploymentsInPeriod: MetricDataInPeriod[];
-  deploymentsAverageTimeInPeriod: MetricDataInPeriod[];
-}
+import React, { FunctionComponent } from 'react';
+import ContentLoader from 'react-content-loader';
 
-export interface MetricDataInPeriod {
-  total?: number;
-  averageTime: number;
-  period: string;
-}
-
-export enum PERIOD_PARAM {
-  ONE_WEEK = 'ONE_WEEK',
-  TWO_WEEKS = 'TWO_WEEKS',
-  ONE_MONTH = 'ONE_MONTH',
-  THREE_MONTHS = 'THREE_MONTHS'
-}
+export const Loader: FunctionComponent = () => (
+  <ContentLoader
+    speed={4}
+    width={350}
+    height={20}
+    viewBox="0 0 350 20"
+    backgroundColor="#2c2c2e"
+    foregroundColor="#3a3a3c"
+  >
+    <rect x="35" y="5" rx="2" ry="2" width="80" height="10" />
+    <rect x="155" y="5" rx="2" ry="2" width="80" height="10" />
+    <circle cx="20" cy="10" r="8" />
+    <circle cx="140" cy="10" r="8" />
+  </ContentLoader>
+);

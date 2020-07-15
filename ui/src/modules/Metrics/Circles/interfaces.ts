@@ -14,24 +14,37 @@
  * limitations under the License.
  */
 
-export interface DeployMetricData {
-  successfulDeployments: number;
-  failedDeployments: number;
-  successfulDeploymentsAverageTime: number;
-  successfulDeploymentsInPeriod: MetricDataInPeriod[];
-  failedDeploymentsInPeriod: MetricDataInPeriod[];
-  deploymentsAverageTimeInPeriod: MetricDataInPeriod[];
+export interface CirclesMetricData {
+  circleStats: Stats;
+  averageCircleLifeTime: number;
+  history: History[];
 }
 
-export interface MetricDataInPeriod {
-  total?: number;
-  averageTime: number;
-  period: string;
+export interface Stats {
+  active: number;
+  inactive: number;
 }
 
-export enum PERIOD_PARAM {
-  ONE_WEEK = 'ONE_WEEK',
-  TWO_WEEKS = 'TWO_WEEKS',
-  ONE_MONTH = 'ONE_MONTH',
-  THREE_MONTHS = 'THREE_MONTHS'
+export interface History {
+  id: string;
+  circleStatus: string;
+  name: string;
+  lifeTime: number;
+  lastUpdate: string;
+}
+
+export interface CircleRelease {
+  id: string;
+  name: string;
+  deployed: string;
+  undeployed: string;
+  lastEditor: string;
+  components: ReleaseComponent[];
+}
+
+export interface ReleaseComponent {
+  id: string;
+  moduleName: string;
+  componentName: string;
+  version: string;
 }
