@@ -29,6 +29,7 @@ import IEnvConfiguration from '../../../app/core/integrations/configuration/inte
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
+import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
 
 describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
@@ -485,6 +486,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
           version: 'component-name-image-tag'
         }
       ],
+      callbackType: CallbackTypeEnum.DEPLOYMENT,
       webHookUrl: expect.stringContaining(envConfiguration.darwinDeploymentCallbackUrl),
       circleId: '12345'
     }
@@ -514,6 +516,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
           version: 'component-name2-image-tag2'
         }
       ],
+      callbackType: CallbackTypeEnum.DEPLOYMENT,
       webHookUrl: expect.stringContaining(envConfiguration.darwinDeploymentCallbackUrl),
       circleId: '12345'
     }
@@ -529,8 +532,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation(() => { throw new Error() })
-    jest.spyOn(httpService, 'post').
-      mockImplementation(() => of({} as AxiosResponse))
+
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
