@@ -30,6 +30,7 @@ import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
+import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
 
 describe('CreateDefaultDeploymentUsecase', () => {
 
@@ -373,7 +374,10 @@ describe('CreateDefaultDeploymentUsecase', () => {
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
       cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
-
+      callbackType: CallbackTypeEnum.DEPLOYMENT,
+      circle: {
+        headerValue: 'circle-header'
+      }
     }
 
     const { body: responseData } =
@@ -476,6 +480,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
           version: 'component-name-image-tag'
         }
       ],
+      callbackType: CallbackTypeEnum.DEPLOYMENT,
       webHookUrl: expect.stringContaining(envConfiguration.darwinDeploymentCallbackUrl),
       circleId: null
     }
@@ -505,6 +510,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
           version: 'component-name2-image-tag2'
         }
       ],
+      callbackType: CallbackTypeEnum.DEPLOYMENT,
       webHookUrl: expect.stringContaining(envConfiguration.darwinDeploymentCallbackUrl),
       circleId: null
     }

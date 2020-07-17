@@ -20,9 +20,9 @@ import { FixtureUtilsService } from '../utils/fixture-utils.service'
 import { AppModule } from '../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
-import { DeploymentEntity, ModuleUndeploymentEntity, UndeploymentEntity} from '../../../app/api/deployments/entity'
+import { DeploymentEntity, ModuleUndeploymentEntity, UndeploymentEntity } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
-import { QueuedDeploymentsRepository} from '../../../app/api/deployments/repository'
+import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import IEnvConfiguration from '../../../app/core/integrations/configuration/interfaces/env-configuration.interface'
 import {
@@ -35,6 +35,7 @@ import { PipelineErrorHandlerService } from '../../../app/api/deployments/servic
 
 import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository'
 import { UndeploymentsRepository } from '../../../app/api/deployments/repository/undeployments.repository'
+import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
 
 describe('CreateUnDeploymentUsecase Integration Test', () => {
 
@@ -151,7 +152,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
       unusedVersions: [],
       versions: [],
       webHookUrl: expect.stringContaining(envConfiguration.darwinUndeploymentCallbackUrl),
-
+      callbackType: CallbackTypeEnum.UNDEPLOYMENT
     }
 
     expect(octopipeServiceSpy).toHaveBeenCalledWith(
@@ -217,13 +218,13 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
       unusedVersions: [],
       versions: [],
       webHookUrl: expect.stringContaining(envConfiguration.darwinUndeploymentCallbackUrl),
+      callbackType: CallbackTypeEnum.UNDEPLOYMENT
     }
     expect(octopipeServiceSpy).toHaveBeenCalledWith(
       expectedOctopipePayload2
     )
 
   })
-
 
   it('/POST /undeploy should create undeployment, componentundeployment and moduleundeployment of a circle deployment', async() => {
     const createUndeploymentRequest = {
@@ -317,7 +318,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
     await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest).expect(500)
     const undeployment: UndeploymentEntity = await undeploymentsRepository.findOneOrFail({ where: { deploymentId: createUndeploymentRequest.deploymentId, status: UndeploymentStatusEnum.FAILED } })
-    const moduleUndeployment: ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find({ where : { undeploymentId: undeployment.id } , relations: ['componentUndeployments'] })
+    const moduleUndeployment: ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find({ where : { undeploymentId: undeployment.id }, relations: ['componentUndeployments'] })
     expect(spyHandleUndeployment).toHaveBeenCalledTimes(3)
     expect(spyHandleComponentUndeployment).toHaveBeenCalledTimes(2)
     expect(undeployment.status).toBe(UndeploymentStatusEnum.FAILED)
