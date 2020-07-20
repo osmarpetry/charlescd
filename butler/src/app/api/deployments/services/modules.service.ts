@@ -8,7 +8,7 @@
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
+* distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -40,27 +40,27 @@ export class ModulesService {
 
   private async saveModule(moduleEntity: ModuleEntity) {
     const module = await this.moduleEntityRepository.findOne({ id: moduleEntity.id })
-    const newComponents: ComponentEntity[] = moduleEntity.components.filter(
-      componentCompare => !module?.components.some(component=>component.id === componentCompare.id )
-    )
-
-    if (module && newComponents.length === 0) {
-      return
-    }
 
     if (!module) {
       await this.moduleEntityRepository.save(moduleEntity)
     } else {
-      newComponents.forEach(
-        newComponent => this.updateAndSaveComponent(newComponent, module)
-      )
+      moduleEntity.components.map(async newComponent => await this.compareComponentsAndSave(newComponent, module))
     }
-
   }
 
-  private async updateAndSaveComponent(newComponent: ComponentEntity, module: ModuleEntity) {
-    newComponent.module = module
-    await this.componentEntityRepository.save(newComponent)
+  private async compareComponentsAndSave(newComponent: ComponentEntity, module: ModuleEntity) {
+    if (!module?.components.some(component=>component.id === newComponent.id)) {
+      await this.componentEntityRepository.save({ ...newComponent, module: module })
+    } else {
+      await this.updateModuleComponents(newComponent, module)
+    }
   }
 
+  private async updateModuleComponents(newComponent: ComponentEntity, module: ModuleEntity) {
+    module.components.map(async oldComponent => {
+      if (newComponent.id === oldComponent.id) {
+        await this.componentEntityRepository.save({...newComponent, pipelineOptions: oldComponent.pipelineOptions})
+      }
+    })
+  }
 }
