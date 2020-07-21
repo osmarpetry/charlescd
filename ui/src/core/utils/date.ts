@@ -43,7 +43,11 @@ export const humanizeDateFromSeconds = (timeInSeconds: number) => {
   const seconds = dayjs.duration(timeInSeconds, 'seconds').seconds();
   const minutes = dayjs.duration(timeInSeconds, 'seconds').minutes();
   const hours = dayjs.duration(timeInSeconds, 'seconds').hours();
+  const days = dayjs.duration(timeInSeconds, 'seconds').days();
 
+  if (days) {
+    return `${days} days`;
+  }
   if (hours) {
     return `${hours}:${minutes}:${seconds}h`;
   }
@@ -52,4 +56,8 @@ export const humanizeDateFromSeconds = (timeInSeconds: number) => {
   }
 
   return `${seconds}s`;
+};
+
+export const dateTimeFormatter = (date: string | Date) => {
+  return dayjs(date, 'YYYY-MM-DD HH:MM:SS').format('DD/MM/YYYY HH:MM');
 };
