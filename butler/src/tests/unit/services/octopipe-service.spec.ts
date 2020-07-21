@@ -16,16 +16,16 @@
 
 import { Test } from '@nestjs/testing'
 import { of } from 'rxjs'
-import { IPipelineOptions } from '../../../app/api/components/interfaces'
-import { OctopipeConfigurationData } from '../../../app/api/configurations/interfaces'
-import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from '../../../app/api/deployments/entity'
-import { IoCTokensConstants } from '../../../app/core/constants/ioc'
-import { IConnectorConfiguration } from '../../../app/core/integrations/cd/interfaces'
-import { OctopipeService } from '../../../app/core/integrations/cd/octopipe'
-import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
-import { GitProvidersEnum } from '../../../app/core/integrations/configuration/interfaces'
-import { IOctopipePayload, ClusterProviderEnum } from '../../../app/core/integrations/octopipe/interfaces/octopipe-payload.interface'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
+import { IPipelineOptions } from '../../../app/v1/api/components/interfaces'
+import { OctopipeConfigurationData } from '../../../app/v1/api/configurations/interfaces'
+import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from '../../../app/v1/api/deployments/entity'
+import { IoCTokensConstants } from '../../../app/v1/core/constants/ioc'
+import { IConnectorConfiguration } from '../../../app/v1/core/integrations/cd/interfaces'
+import { OctopipeService } from '../../../app/v1/core/integrations/cd/octopipe'
+import { OctopipeApiService } from '../../../app/v1/core/integrations/cd/octopipe/octopipe-api.service'
+import { GitProvidersEnum } from '../../../app/v1/core/integrations/configuration/interfaces'
+import { IOctopipePayload, ClusterProviderEnum } from '../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import { EnvConfigurationStub } from '../../stubs/configurations'
 import { ConsoleLoggerServiceStub, OctopipeApiServiceStub } from '../../stubs/services'
 
@@ -102,7 +102,7 @@ describe('Octopipe Service', () => {
         componentName: componentDeployment.componentName,
         helmRepository: componentDeployment.moduleDeployment.helmRepository,
         callbackCircleId: 'circle-id',
-        pipelineCallbackUrl: 'dummy-callback-url'
+        pipelineCallbackUrl: 'dummy-callback-url',
       }
 
       const payload = octopipeService.createPipelineConfigurationObject(connectorConfiguration)
@@ -227,6 +227,7 @@ describe('Octopipe Service', () => {
               namespace: 'some-app-namespace'
             },
             spec: {
+              gateways: [],
               hosts: [
                 'some-app-name'
               ],
@@ -507,6 +508,7 @@ describe('Octopipe Service', () => {
               namespace: 'some-app-namespace'
             },
             spec: {
+              gateways: [],
               hosts: [
                 'some-app-name'
               ],
@@ -768,6 +770,7 @@ describe('Octopipe Service', () => {
               namespace: 'some-app-namespace'
             },
             spec: {
+              gateways: [],
               hosts: [
                 'some-app-name'
               ],
