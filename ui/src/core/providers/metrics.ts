@@ -19,6 +19,10 @@ import { baseRequest } from './base';
 
 const endpoint = '/moove/metrics';
 
+const circlesEndpoint = '/moove/v2/circles';
+
+const deploymentEndpoint = '/moove/v2/deployments';
+
 export const findCircleMetrics = (data: CircleMetrics) => {
   const params = new URLSearchParams({ ...data });
   return baseRequest(`${endpoint}/?${params}`);
@@ -26,3 +30,11 @@ export const findCircleMetrics = (data: CircleMetrics) => {
 
 export const findDeployMetrics = (params: URLSearchParams) =>
   baseRequest(`${endpoint}/deployments?${params}`);
+
+export const findAllCirclesMetrics = () => baseRequest(`${endpoint}/circles`);
+
+export const findAllCirclesHistory = (params: URLSearchParams) =>
+  baseRequest(`${circlesEndpoint}/history?${params}`);
+
+export const findAllCirclesReleases = (params: URLSearchParams) =>
+  baseRequest(`${deploymentEndpoint}/history?${params}`);
