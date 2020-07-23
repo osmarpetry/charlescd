@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-import AreaChart from './Area';
-import ColumnChart from './Column';
-import MixedChart from './Mixed';
+import React from 'react';
+import { render, fireEvent, wait } from 'unit-test/testUtils';
+import Deploy from '..';
 
-export { AreaChart, ColumnChart, MixedChart };
+test('render Deploy default screen', async () => {
+  const { getByTestId } = render(<Deploy />);
+
+  await wait();
+
+  expect(getByTestId("metrics-deploy")).toBeInTheDocument();
+  expect(getByTestId("metrics-filter")).toBeInTheDocument();
+  expect(getByTestId("apexchart-deploy")).toBeInTheDocument();
+})
