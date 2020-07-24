@@ -15,10 +15,7 @@
  */
 
 import styled from 'styled-components';
-import {
-  AreaChart as AreaChartComponent,
-  ColumnChart as ColumnChartComponent
-} from 'core/components/Charts';
+import { MixedChart as MixedChartComponent } from 'core/components/Charts';
 import ComponentButton from 'core/components/Button';
 import SelectComponent from 'core/components/Form/Select';
 
@@ -26,7 +23,6 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   padding: 61px 0 80px 37px;
-
   > * + * {
     margin-top: 20px;
   }
@@ -40,18 +36,15 @@ interface Card {
 const Plates = styled.div`
   display: flex;
   flex-direction: row;
-
   > * {
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: center;
-
     > :not(:first-child) {
       margin-top: 12px;
     }
   }
-
   > :not(:first-child) {
     margin-left: 20px;
   }
@@ -66,19 +59,7 @@ const Card = styled.div<Card>`
   box-sizing: border-box;
 `;
 
-const AreaChart = styled(AreaChartComponent)`
-  margin-top: 20px;
-  margin-left: -15px;
-
-  .apexcharts-gridlines-horizontal > .apexcharts-gridline {
-    opacity: 0.2;
-  }
-`;
-
-const ColumnChart = styled(ColumnChartComponent)`
-  margin-top: 20px;
-  margin-left: -15px;
-
+const MixedChart = styled(MixedChartComponent)`
   .apexcharts-gridlines-horizontal > .apexcharts-gridline {
     opacity: 0.2;
   }
@@ -87,7 +68,6 @@ const ColumnChart = styled(ColumnChartComponent)`
 const StyledSelect = `
   width: 200px;
   padding-right: 30px;
-
   div:first-child {
     background: transparent;
   }
@@ -113,19 +93,19 @@ const FilterForm = styled.form`
 
 const ChartControls = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
 `;
 
 const ChartMenu = styled.div`
-  margin-right: 7px;
+  position: relative;
+  top: 15px;
 `;
 
 export default {
   Content,
   Card,
   Plates,
-  AreaChart,
-  ColumnChart,
+  MixedChart,
   SingleSelect,
   MultiSelect,
   Button,
