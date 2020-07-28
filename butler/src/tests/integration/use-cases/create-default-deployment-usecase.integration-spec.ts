@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { Test } from '@nestjs/testing'
 import { HttpService, INestApplication } from '@nestjs/common'
 import { FixtureUtilsService } from '../utils/fixture-utils.service'
@@ -31,6 +30,7 @@ import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { OctopipeApiService } from '../../../app/v1/core/integrations/cd/octopipe/octopipe-api.service'
 import { ModuleEntity } from '../../../app/v1/api/modules/entity'
+import { CallbackTypeEnum } from '../../../app/v1/api/notifications/enums/callback-type.enum'
 
 describe('CreateDefaultDeploymentUsecase', () => {
 
@@ -441,7 +441,10 @@ describe('CreateDefaultDeploymentUsecase', () => {
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
       cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
-
+      callbackType: CallbackTypeEnum.DEPLOYMENT,
+      circle: {
+        headerValue: 'circle-header'
+      }
     }
 
     const { body: responseData } =
@@ -544,6 +547,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
           version: 'component-name-image-tag'
         }
       ],
+      callbackType: CallbackTypeEnum.DEPLOYMENT,
       webHookUrl: expect.stringContaining(envConfiguration.darwinDeploymentCallbackUrl),
       circleId: null
     }
@@ -573,6 +577,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
           version: 'component-name2-image-tag2'
         }
       ],
+      callbackType: CallbackTypeEnum.DEPLOYMENT,
       webHookUrl: expect.stringContaining(envConfiguration.darwinDeploymentCallbackUrl),
       circleId: null
     }
