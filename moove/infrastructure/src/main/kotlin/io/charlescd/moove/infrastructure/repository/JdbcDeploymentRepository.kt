@@ -346,8 +346,8 @@ class JdbcDeploymentRepository(
                 FROM deployments
                     INNER JOIN modules deployment_module ON deployment_module.workspace_id = deployments.workspace_id
                     INNER JOIN components deployment_component ON deployment_component.module_id = deployment_module.id
-                    INNER JOIN builds deployment_builds ON deployment_builds.id = deployment.build_id
-                    INNER JOIN builds_features build_features ON builds_features.id = deployment.build_id
+                    INNER JOIN builds deployment_builds ON deployment_builds.id = deployments.build_id
+                    INNER JOIN builds_features build_features ON builds_features.id = deployments.build_id
                     INNER JOIN feature_modules feature_modules ON feature_modules.module_id = modules.id
                 WHERE deployment_component.id  = ? AND STATUS NOT IN('DEPLOY_FAILED','NOT_DEPLOYED')
         """
