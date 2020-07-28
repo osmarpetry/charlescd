@@ -30,9 +30,10 @@ export class DeploymentsRepository extends Repository<DeploymentEntity> {
     await this.update(deploymentId, { status, finishedAt: new Date() })
   }
 
-  public async findWithAllRelations(component: ComponentDeploymentEntity, moduleId: any, cdConfigurationId: string) {
+  public async findWithAllRelations(component: ComponentDeploymentEntity, moduleId: any, cdConfigurationId: string): Promise<DeploymentEntity> {
 
     const deployment  =  await this.createQueryBuilder('deployments')
+
       .innerJoinAndSelect('deployments.modules', 'moduleDeployment')
       .innerJoinAndSelect('moduleDeployment.components', 'componentDeployment', 'moduleDeployment.id = componentDeployment.moduleDeployment')
       .innerJoinAndSelect(ComponentEntity, 'component', 'componentDeployment.componentId = component.id')
@@ -41,6 +42,7 @@ export class DeploymentsRepository extends Repository<DeploymentEntity> {
       .andWhere('componentDeployment.componentName = :name', { name: component.componentName })
       .andWhere('component.id != :componentId', { componentId: component.componentId })
       .andWhere('deployments.cdConfigurationId = :cdConfigurationId', { cdConfigurationId: cdConfigurationId })
+      .addOrderBy('deployment.createdAt', 'DESC')
       .getOne()
     return deployment
   }
