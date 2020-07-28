@@ -72,4 +72,5 @@ class ModuleService(private val moduleRepository: ModuleRepository) {
     fun findByIds(ids: List<String>): List<Module> {
         return moduleRepository.findByIds(ids)
     }
+
 }
