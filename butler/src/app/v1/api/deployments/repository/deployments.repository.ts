@@ -30,7 +30,7 @@ export class DeploymentsRepository extends Repository<DeploymentEntity> {
     await this.update(deploymentId, { status, finishedAt: new Date() })
   }
 
-  public async findWithAllRelations(component: ComponentDeploymentEntity, moduleId: any, cdConfigurationId: string): Promise<DeploymentEntity> {
+  public async findWithAllRelations(component: ComponentDeploymentEntity, moduleId: any, cdConfigurationId: string): Promise<DeploymentEntity | undefined> {
 
     const deployment  =  await this.createQueryBuilder('deployments')
 
