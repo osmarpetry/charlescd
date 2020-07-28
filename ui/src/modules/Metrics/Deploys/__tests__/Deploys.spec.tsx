@@ -15,15 +15,16 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
+import { render, wait, screen } from 'unit-test/testUtils';
 import Deploy from '..';
 
 test('render Deploy default screen', async () => {
-  const { getByTestId } = render(<Deploy />);
+  render(<Deploy />);
 
   await wait();
 
-  expect(getByTestId("metrics-deploy")).toBeInTheDocument();
-  expect(getByTestId("metrics-filter")).toBeInTheDocument();
-  expect(getByTestId("apexchart-deploy")).toBeInTheDocument();
+  expect(screen.getByTestId('metrics-deploy')).toBeInTheDocument();
+  expect(screen.getByTestId('metrics-filter')).toBeInTheDocument();
+  expect(screen.getByTestId('apexchart-deploy')).toBeInTheDocument();
+  expect(screen.getByTestId('release-history')).toBeInTheDocument();
 })
