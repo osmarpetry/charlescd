@@ -53,9 +53,8 @@ open class RemoveComponentInteractorImpl(
         }
 
         val deployment = deploymentsService.findActiveByComponentId(componentId)
-        println(deployment)
 
-        deployment?.let{
+        if (deployment.isNotEmpty()) {
             throw BusinessException.of(MooveErrorCode.COMPONENT_HAS_ACTIVE_RELEASES)
         }
     }
