@@ -62,6 +62,12 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
         )
     }
 
+    fun findActiveByComponentId(componentId: String): List<Deployment> {
+        return this.deploymentRepository.findActiveByComponentId(
+            componentId
+        )
+    }
+
     fun findDeploymentsHistory(workspaceId: String, circleId: String, pageRequest: PageRequest): Page<DeploymentHistory> {
         return this.findDeploymentsHistory(workspaceId, listOf(circleId), pageRequest)
     }

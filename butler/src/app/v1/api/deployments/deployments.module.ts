@@ -54,7 +54,10 @@ import { ServicesModule } from '../../core/services/services.module'
 import { DeploymentUniquenessPipe } from './pipes'
 import { CdConfigurationsRepository } from '../configurations/repository'
 import { ModulesService } from './services/modules.service'
-import { UndeploymentsController } from './controller/undeployments.controller';
+import { UndeploymentsController } from './controller/undeployments.controller'
+import { ComponentUniquenessPipe } from './pipes/component-uniqueness.pipe'
+import { DeploymentsRepository } from './repository/deployments.repository'
+import { ComponentRepository } from './repository/components.repository'
 
 @Module({
   imports: [
@@ -75,7 +78,9 @@ import { UndeploymentsController } from './controller/undeployments.controller';
       ComponentUndeploymentsRepository,
       CdConfigurationsRepository,
       QueuedIstioDeploymentsRepository,
-      QueuedIstioDeploymentEntity
+      QueuedIstioDeploymentEntity,
+      DeploymentsRepository,
+      ComponentRepository
     ])
   ],
   controllers: [
@@ -90,6 +95,7 @@ import { UndeploymentsController } from './controller/undeployments.controller';
     CreateCircleDeploymentRequestUsecase,
     CreateDefaultDeploymentRequestUsecase,
     DeploymentUniquenessPipe,
+    ComponentUniquenessPipe,
     ModulesService
   ],
   exports: [
