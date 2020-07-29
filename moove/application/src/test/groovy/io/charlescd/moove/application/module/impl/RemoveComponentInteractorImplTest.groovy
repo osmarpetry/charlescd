@@ -65,7 +65,7 @@ class RemoveComponentInteractorImplTest extends Specification {
 
         then:
         1 * moduleRepository.find(moduleId, workspaceId) >> Optional.of(module)
-        1 * deploymentsRepository.findActiveByComponentId(_) >> null
+        1 * deploymentsRepository.findActiveByComponentId(_) >> []
 
         1 * moduleRepository.removeComponents(_) >> { arguments ->
             def moduleArg = arguments[0]
