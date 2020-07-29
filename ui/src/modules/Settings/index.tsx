@@ -19,6 +19,7 @@ import { Route, Switch } from 'react-router-dom';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
 import PrivateRoute from 'core/components/PrivateRoute';
+import Modal from 'core/components/Modal';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
 import Menu from './Menu';
@@ -28,9 +29,11 @@ const Credentials = lazy(() => import('modules/Settings/Credentials'));
 
 const Settings = () => {
   const profileName = getProfileByKey('name');
+  const veteranUser = localStorage.getItem('wizard');
 
   return (
     <Page>
+      {!veteranUser && <Modal.Wizard />}
       <Page.Menu>
         <Menu items={SettingsMenu} />
       </Page.Menu>
