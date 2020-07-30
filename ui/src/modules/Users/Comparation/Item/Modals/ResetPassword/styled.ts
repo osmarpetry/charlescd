@@ -15,36 +15,23 @@
  */
 
 import styled from 'styled-components';
-import ModalDefault from 'core/components/Modal/Default';
-import ComponentButton from 'core/components/Button';
-import { COLOR_BLACK_RUSSIAN, COLOR_BASTILLE } from 'core/assets/colors';
+import ComponentModal from 'core/components/Modal';
 
-const Members = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin-top: 10px;
-`;
-
-const Button = styled(ComponentButton.Rounded)`
-  margin-top: 5px;
-`;
-
-const Modal = styled(ModalDefault)`
+const Modal = styled(ComponentModal.Default)`
   .modal-container {
-    padding: 10px 70px;
-    width: 1111px;
-    background-color: ${COLOR_BLACK_RUSSIAN};
-    top: 50px;
+    min-height: 150px;
+    width: 408px;
   }
 
-  .modal-background {
-    opacity: 0.7;
-    background-color: ${COLOR_BASTILLE};
+  .modal-content {
+    overflow: unset;
+
+    > * {
+      margin-bottom: 15px;
+    }
   }
 `;
 
 export default {
-  Button,
-  Modal,
-  Members
+  Modal
 };
