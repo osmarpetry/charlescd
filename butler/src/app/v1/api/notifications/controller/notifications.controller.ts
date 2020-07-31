@@ -36,8 +36,9 @@ export class NotificationsController {
   @HttpCode(204)
   public async receiveDeploymentCallback(
     @Query('queueId') queueId: number,
-    @Body() finishDeploymentDto: FinishDeploymentDto
+    @Body() finishDeploymentDto: any
   ): Promise<void> {
+    console.log(finishDeploymentDto)
     if (finishDeploymentDto.callbackType === CallbackTypeEnum.DEPLOYMENT) {
       return await this.receiveDeploymentCallbackUsecase.execute(queueId, finishDeploymentDto)
     }
