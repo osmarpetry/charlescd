@@ -17,12 +17,16 @@
 package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
+import io.charlescd.moove.application.metric.VerifyProviderConnectionInteractor
+import io.charlescd.moove.application.metric.VerifyWorkspaceProviderConnectionInteractor
+import io.charlescd.moove.application.metric.response.ProviderConnectionResponse
 import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.application.workspace.*
 import io.charlescd.moove.application.workspace.request.AssociateUserGroupToWorkspaceRequest
 import io.charlescd.moove.application.workspace.request.CreateWorkspaceRequest
 import io.charlescd.moove.application.workspace.request.PatchWorkspaceRequest
 import io.charlescd.moove.application.workspace.response.WorkspaceResponse
+import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
@@ -39,7 +43,9 @@ class V2WorkspaceController(
     private val patchWorkspaceInteractor: PatchWorkspaceInteractor,
     private val findWorkspaceInteractor: FindWorkspaceInteractor,
     private val findAllWorkspacesInteractor: FindAllWorkspaceInteractor,
-    private val findAllWorkspaceUsersInteractor: FindAllWorkspaceUsersInteractor
+    private val findAllWorkspaceUsersInteractor: FindAllWorkspaceUsersInteractor,
+    private val verifyProviderConnectionInteractor: VerifyProviderConnectionInteractor,
+    private val verifyWorkspaceProviderConnectionInteractor: VerifyWorkspaceProviderConnectionInteractor
 ) {
 
     @ApiOperation(value = "Create a new Workspace")
@@ -125,4 +131,21 @@ class V2WorkspaceController(
     ): ResourcePageResponse<UserResponse> {
         return this.findAllWorkspaceUsersInteractor.execute(workspaceId, name, email, pageable)
     }
+
+    @ApiOperation(value = "Verify metrics provider connection")
+    @GetMapping("/config/verify-provider-connection")
+    fun verifyProviderConnection(
+        @RequestParam provider: String,
+        @RequestParam providerType: MetricConfiguration.ProviderEnum
+    ): ProviderConnectionResponse =
+        verifyProviderConnectionInteractor.execute(provider, providerType)
+
+    @ApiOperation(value = "Verify metrics provider connection to the given Workspace")
+    @GetMapping("/{workspaceId}/config/verify-provider-connection")
+    fun verifyProviderConnectionByIdAndWorkspaceId(
+        @PathVariable workspaceId: String,
+        @RequestParam providerId: String,
+        @RequestParam providerType: MetricConfiguration.ProviderEnum
+    ): ProviderConnectionResponse =
+        verifyWorkspaceProviderConnectionInteractor.execute(workspaceId, providerId, providerType)
 }
