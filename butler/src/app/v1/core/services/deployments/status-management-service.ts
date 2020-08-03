@@ -101,6 +101,7 @@ export class StatusManagementService {
             await this.getDeploymentEntity(deploymentId)
     const finishedModules: ModuleDeploymentEntity[] =
             this.getDeploymentFinishedModules(deployment)
+    this.consoleLoggerService.log('START:TRIGGER_ISTIO_PIPELINE', finishedModules )
 
     return finishedModules.length === deployment.modules.length
   }

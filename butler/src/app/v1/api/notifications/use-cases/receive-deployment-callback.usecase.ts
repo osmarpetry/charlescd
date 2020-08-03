@@ -87,6 +87,7 @@ export class ReceiveDeploymentCallbackUsecase {
   private async triggerIstioPipelines(
     componentDeploymentId: string
   ): Promise<void> {
+    this.consoleLoggerService.log('START:TRIGGER_ISTIO_PIPELINE', componentDeploymentId )
     const componentDeployment: ComponentDeploymentEntity =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
     const { moduleDeployment: { deployment } } = componentDeployment
@@ -95,6 +96,7 @@ export class ReceiveDeploymentCallbackUsecase {
     if (isAllModuleFinished) {
       await this.pipelineQueuesService.triggerAllIstioDeployments(deployment.id)
     }
+    this.consoleLoggerService.log('FINISH:TRIGGER_ISTIO_PIPELINE', isAllModuleFinished )
   }
 
   private async handleDeploymentSuccess(
