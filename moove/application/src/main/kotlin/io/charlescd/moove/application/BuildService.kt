@@ -42,12 +42,14 @@ class BuildService(private val buildRepository: BuildRepository) {
     }
 
     fun find(tag: String?, status: BuildStatusEnum?, workspaceId: String, pageRequest: PageRequest): Page<Build> {
-        return this.buildRepository.find(
+        val builds =  this.buildRepository.find(
             tag,
             status,
             workspaceId,
             pageRequest
         )
+        println(builds)
+        return builds
     }
 
     fun save(build: Build): Build {
