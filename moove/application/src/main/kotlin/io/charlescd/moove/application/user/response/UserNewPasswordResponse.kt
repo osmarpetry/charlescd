@@ -16,20 +16,8 @@
  *
  */
 
-package io.charlescd.moove.domain.service
+package io.charlescd.moove.application.user.response
 
-import io.charlescd.moove.domain.Permission
-import io.charlescd.moove.domain.User
-
-interface KeycloakService {
-
-    fun addPermissionsToUser(workspaceId: String, user: User, permissions: List<Permission>)
-
-    fun removePermissionsFromUser(workspaceId: String, user: User, permissions: List<Permission>)
-
-    fun associatePermissionsToNewUsers(user: User, workspacePermissionsMapping: Map<String, List<Permission>>)
-
-    fun disassociatePermissionsFromNewUsers(user: User, workspacePermissionsMapping: Map<String, List<Permission>>)
-
-    fun resetPassword(id: String, newPassword: String)
-}
+data class UserNewPasswordResponse(
+    val newPassword: String
+)
