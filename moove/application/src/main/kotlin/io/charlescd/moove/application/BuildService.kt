@@ -48,11 +48,11 @@ class BuildService(private val buildRepository: BuildRepository) {
             workspaceId,
             pageRequest
         )
-        println(builds)
         return builds
     }
 
     fun findActiveBuilds(tag: String?, status: BuildStatusEnum?, workspaceId: String, pageRequest: PageRequest): Page<Build> {
+        println("aqui")
         return this.buildRepository.findActiveBuilds(
             tag,
             status,

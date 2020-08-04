@@ -253,7 +253,7 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
                      LEFT JOIN users circle_user ON circles.user_id = circle_user.id
             WHERE 1 = 1
         """
-
+        println(statement)
         val parametersMap = createParametersMap(tag, status, workspaceId)
         val count = executeCountQuery(createCountQuery(parametersMap), parametersMap)
         val result = this.jdbcTemplate.query(
