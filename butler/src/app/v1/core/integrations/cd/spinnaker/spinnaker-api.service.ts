@@ -43,6 +43,7 @@ export class SpinnakerApiService {
   }
 
   public createPipeline(spinnakerPipeline: IBaseSpinnakerPipeline, url: string): Observable<AxiosResponse> {
+    console.log(spinnakerPipeline)
     return this.httpService.post(
       `${url}/pipelines`,
       spinnakerPipeline,
@@ -109,6 +110,17 @@ export class SpinnakerApiService {
   public getCredentials(url: string): Observable<AxiosResponse> {
     return this.httpService.get(
       `${url}/networks`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+  }
+
+  public getPipelines(url: string): Observable<AxiosResponse> {
+    return this.httpService.get(
+      `${url}/pipelines`,
       {
         headers: {
           'Content-Type': 'application/json',
