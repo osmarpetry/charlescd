@@ -105,4 +105,26 @@ export class SpinnakerApiService {
       },
     )
   }
+
+  public getCredentials(url: string): Observable<AxiosResponse> {
+    return this.httpService.get(
+      `${url}/credentials`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+  }
+
+  public getApplications(applicationName: string, url: string): Observable<AxiosResponse> {
+    return this.httpService.get(
+      `${url}/applications`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+  }
 }
