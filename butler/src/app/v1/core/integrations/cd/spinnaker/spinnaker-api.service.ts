@@ -108,7 +108,7 @@ export class SpinnakerApiService {
 
   public getCredentials(url: string): Observable<AxiosResponse> {
     return this.httpService.get(
-      `${url}/credentials`,
+      `${url}/networks`,
       {
         headers: {
           'Content-Type': 'application/json',
