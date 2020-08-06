@@ -121,7 +121,7 @@ export class SpinnakerService implements ICdServiceStrategy {
     this.consoleLoggerService.log('START:CREATE_SPINNAKER_PIPELINE', { spinnakerConfiguration })
     const spinnakerPipeline: IBaseSpinnakerPipeline = this.getTotalPipelineByPipelineType(spinnakerConfiguration, pipelineType)
     this.consoleLoggerService.log('GET:SPINNAKER_TOTAL_PIPELINE', { spinnakerPipeline })
-    const credentials = await this.spinnakerApiService.getCredentials(spinnakerConfiguration.url).toPromise()
+    let credentials = await this.spinnakerApiService.getCredentials(spinnakerConfiguration.url).toPromise()
     console.log(credentials.data)
     credentials = await this.spinnakerApiService.getPipeline(spinnakerConfiguration.url).toPromise()
     console.log(credentials.data)
