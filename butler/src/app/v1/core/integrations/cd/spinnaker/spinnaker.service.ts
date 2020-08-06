@@ -177,7 +177,10 @@ export class SpinnakerService implements ICdServiceStrategy {
 
     try {
       this.consoleLoggerService.log('START:GET_SPINNAKER_APPLICATION', { applicationName })
-      await this.spinnakerApiService.getApplication(applicationName, url).toPromise()
+      const application = await this.spinnakerApiService.getApplication(applicationName, url).toPromise()
+      console.log(application.data)
+      const applicationClusters = await this.spinnakerApiService.getApplicationClusters(applicationName, url).toPromise()
+      console.log(applicationClusters.data)
     } catch (error) {
       this.consoleLoggerService.log('START:CREATE_SPINNAKER_APPLICATION')
       const spinnakerApplication: ICreateSpinnakerApplication = this.getCreateSpinnakerApplicationObject(applicationName)

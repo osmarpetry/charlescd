@@ -94,4 +94,15 @@ export class SpinnakerApiService {
       },
     )
   }
+
+  public getApplicationClusters(applicationName: string, url: string): Observable<AxiosResponse> {
+    return this.httpService.get(
+      `${url}/applications/${applicationName}/clusters`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+  }
 }
