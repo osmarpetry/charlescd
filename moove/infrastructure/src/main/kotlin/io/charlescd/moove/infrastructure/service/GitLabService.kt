@@ -1,27 +1,11 @@
-/*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package io.charlescd.moove.infrastructure.service
 
-package io.charlescd.moove.commons.integration.git.service
-
-import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
-import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
-import io.charlescd.moove.commons.integration.git.factory.GitLabClientFactoryLegacy
-import io.charlescd.moove.commons.integration.git.model.CompareResult
-import io.charlescd.moove.legacy.repository.entity.GitCredentials
-import io.charlescd.moove.legacy.repository.entity.GitServiceProvider
+import io.charlescd.moove.domain.CompareResult
+import io.charlescd.moove.domain.GitCredentials
+import io.charlescd.moove.domain.GitServiceProvider
+import io.charlescd.moove.domain.MooveErrorCode
+import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.service.GitService
 import java.util.*
 import org.gitlab4j.api.Constants
 import org.gitlab4j.api.GitLabApi
@@ -32,7 +16,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class GitLabServiceLegacy(private val gitLabClientFactoryLegacy: GitLabClientFactoryLegacy) : GitServiceLegacy() {
+class GitLabService(private val gitLabClientFactoryLegacy: GitLabClientFactory) : GitService() {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val UNABLE_TO_MERGE = "cannot_be_merged"
@@ -43,7 +27,7 @@ class GitLabServiceLegacy(private val gitLabClientFactoryLegacy: GitLabClientFac
         baseBranch: String,
         headBranch: String
     ) {
-        log.info("attempting to merge branch: $headBranch into $baseBranch on GitLab repository: $repository")
+        log.info("Attempting to merge branch: $headBranch into $baseBranch on GitLab repository: $repository")
         try {
             val client = getClient(gitCredentials)
             val mergeRequests = client.mergeRequestApi.getMergeRequests(MergeRequestFilter().apply {
@@ -51,26 +35,37 @@ class GitLabServiceLegacy(private val gitLabClientFactoryLegacy: GitLabClientFac
                 targetBranch = baseBranch
                 state = Constants.MergeRequestState.OPENED
             })
+
             if (mergeRequests.isEmpty()) {
-                val mergeRequest = client.mergeRequestApi.createMergeRequest(
-                    repository,
-                    headBranch,
-                    baseBranch,
-                    "MERGE $headBranch into $baseBranch",
-                    COMMIT_MESSAGE,
-                    null
-                )
-                verifyMergeability(mergeRequest)
-                client.mergeRequestApi.acceptMergeRequest(repository, mergeRequest.iid)
+                createMergeRequestAndMergeItIfPossible(client, repository, headBranch, baseBranch)
             } else {
                 verifyMergeability(mergeRequests.first())
                 client.mergeRequestApi.acceptMergeRequest(repository, mergeRequests.first().iid)
             }
-            log.info("branch: $headBranch successfully merged into branch: $baseBranch")
+
+            log.info("Branch: $headBranch successfully merged into branch: $baseBranch")
         } catch (e: Exception) {
-            log.error("failed to merge branch: $headBranch into branch: $baseBranch with error: ${e.message}")
+            log.error("Failed to merge branch: $headBranch into branch: $baseBranch with error: ${e.message}")
             handleResponseError(error = e, repository = repository, baseBranch = baseBranch, headBranch = headBranch)
         }
+    }
+
+    private fun createMergeRequestAndMergeItIfPossible(
+        client: GitLabApi,
+        repository: String,
+        headBranch: String,
+        baseBranch: String
+    ) {
+        val mergeRequest = client.mergeRequestApi.createMergeRequest(
+            repository,
+            headBranch,
+            baseBranch,
+            "MERGE $headBranch into $baseBranch",
+            COMMIT_MESSAGE,
+            null
+        )
+        verifyMergeability(mergeRequest)
+        client.mergeRequestApi.acceptMergeRequest(repository, mergeRequest.iid)
     }
 
     override fun createBranch(
@@ -79,16 +74,17 @@ class GitLabServiceLegacy(private val gitLabClientFactoryLegacy: GitLabClientFac
         branchName: String,
         baseBranchName: String
     ): Optional<String> {
-        log.info("attempting to create new branch on GitLab repository: $repository from base: $baseBranchName and with name: $branchName")
+        log.info("Attempting to create new branch on GitLab repository: $repository from base: $baseBranchName and with name: $branchName")
+
         return try {
             Optional.of(
                 getClient(gitCredentials).repositoryApi.createBranch(repository, branchName, baseBranchName)
                     .name
-            ).also { log.info("new branch: $branchName created successfully") }
-        } catch (e: Exception) {
-            log.error("failed to create branch: $branchName with error: ${e.message}")
+            ).also { log.info("New branch: $branchName created successfully") }
+        } catch (exception: Exception) {
+            log.error("failed to create branch: $branchName with error: ${exception.message}")
             handleResponseError(
-                error = e,
+                error = exception,
                 repository = repository,
                 baseBranch = baseBranchName,
                 branchName = branchName
@@ -104,17 +100,18 @@ class GitLabServiceLegacy(private val gitLabClientFactoryLegacy: GitLabClientFac
         sourceBranch: String,
         description: String
     ): Optional<String> {
-        log.info("attempting to create new release on GitLab repository: $repository from base: $sourceBranch and with name: $releaseName")
+        log.info("Attempting to create new release on GitLab repository: $repository from base: $sourceBranch and with name: $releaseName")
+
         return try {
             val client = getClient(gitCredentials)
-            val tag = client.tagsApi.createTag(repository, releaseName, sourceBranch, RELEASE_DESCRIPTION, "")
+            val tag = client.tagsApi.createTag(repository, releaseName, sourceBranch, RELEASE_DESCRIPTION, description)
             Optional.of(client.tagsApi.createRelease(repository, tag.name, RELEASE_DESCRIPTION).tagName).apply {
-                log.info("release: $releaseName created successfully")
+                log.info("Release: $releaseName created successfully")
             }
-        } catch (e: Exception) {
-            log.error("failed to create release: $releaseName with error: ${e.message}")
+        } catch (exception: Exception) {
+            log.error("failed to create release: $releaseName with error: ${exception.message}")
             handleResponseError(
-                error = e,
+                error = exception,
                 repository = repository,
                 releaseName = releaseName,
                 baseBranch = sourceBranch
@@ -173,7 +170,7 @@ class GitLabServiceLegacy(private val gitLabClientFactoryLegacy: GitLabClientFac
         headBranch: String
     ): CompareResult {
         return try {
-            log.info("comparing head: $headBranch with base: $baseBranch on GitLab repository: $repository")
+            log.info("Comparing head: $headBranch with base: $baseBranch on GitLab repository: $repository")
             getClient(gitCredentials).repositoryApi.compare(repository, baseBranch, headBranch).let {
                 CompareResult(repository, baseBranch, headBranch, 0, it.commits.size)
             }
@@ -198,54 +195,54 @@ class GitLabServiceLegacy(private val gitLabClientFactoryLegacy: GitLabClientFac
             isNotFoundError(error) && containsErrorMessage(
                 error,
                 "404 Branch Not Found"
-            ) -> throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.GIT_ERROR_BRANCH_NOT_FOUND)
+            ) -> throw BusinessException.of(MooveErrorCode.GIT_ERROR_BRANCH_NOT_FOUND)
                 .withParameters(branchName)
 
             isNotFoundError(error) && containsErrorMessage(
                 error,
                 "404 Tag Not Found"
-            ) -> throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.GIT_ERROR_TAG_NOT_FOUND)
+            ) -> throw BusinessException.of(MooveErrorCode.GIT_ERROR_TAG_NOT_FOUND)
                 .withParameters(releaseName)
 
-            isNotFoundError(error) -> throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.GIT_ERROR_REPOSITORY_NOT_FOUND)
+            isNotFoundError(error) -> throw BusinessException.of(MooveErrorCode.GIT_ERROR_REPOSITORY_NOT_FOUND)
                 .withParameters(repository)
 
             isClientError(error) && containsErrorMessage(
                 error,
                 "Branch already exists"
-            ) -> throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.GIT_ERROR_DUPLICATED_BRANCH)
+            ) -> throw BusinessException.of(MooveErrorCode.GIT_ERROR_DUPLICATED_BRANCH)
                 .withParameters(branchName, repository)
 
             isClientError(error) && containsErrorMessage(
                 error,
                 "Invalid reference name"
-            ) -> throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.GIT_ERROR_BASE_NOT_FOUND)
+            ) -> throw BusinessException.of(MooveErrorCode.GIT_ERROR_BASE_NOT_FOUND)
                 .withParameters(baseBranch, repository)
 
             isClientError(error) && containsErrorMessage(
                 error,
                 "Target $baseBranch is invalid"
-            ) -> throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.GIT_ERROR_BASE_NOT_FOUND)
+            ) -> throw BusinessException.of(MooveErrorCode.GIT_ERROR_BASE_NOT_FOUND)
                 .withParameters(releaseName, repository)
 
             isClientError(error) && containsErrorMessage(
                 error,
                 "Tag $releaseName already exists"
-            ) -> throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.GIT_ERROR_DUPLICATED_TAG)
+            ) -> throw BusinessException.of(MooveErrorCode.GIT_ERROR_DUPLICATED_TAG)
                 .withParameters(releaseName, repository)
 
-            isConflictError(error) -> throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.GIT_ERROR_MERGE_CONFLICT)
+            isConflictError(error) -> throw BusinessException.of(MooveErrorCode.GIT_ERROR_MERGE_CONFLICT)
                 .withParameters(headBranch, baseBranch, repository)
 
             isMethodNotAllowedError(error) && containsErrorMessage(error, "Method Not Allowed") ->
-                throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.GIT_ERROR_MERGE_ERROR)
+                throw BusinessException.of(MooveErrorCode.GIT_ERROR_MERGE_ERROR)
                     .withParameters(repository)
 
-            isForbiddenError(error) -> throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.GIT_ERROR_FORBIDDEN)
+            isForbiddenError(error) -> throw BusinessException.of(MooveErrorCode.GIT_ERROR_FORBIDDEN)
                 .withParameters(repository)
 
-            error is GitLabApiException -> throw BusinessExceptionLegacy.of(
-                MooveErrorCodeLegacy.GIT_INTEGRATION_ERROR,
+            error is GitLabApiException -> throw BusinessException.of(
+                MooveErrorCode.GIT_INTEGRATION_ERROR,
                 error.message!!
             )
 
