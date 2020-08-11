@@ -100,6 +100,7 @@ export default class TotalPipeline {
         [],
         undefined
       )
+      console.log(helmStage)
       this.basePipeline.stages.push(helmStage)
       this.increaseRefId()
       this.updatePreviousStage(createBakeStage(version.version))
@@ -112,6 +113,7 @@ export default class TotalPipeline {
         this.contract.appName,
         this.contract.account
       )
+      console.log(deployment)
       this.basePipeline.stages.push(deployment)
       this.deploymentsIds.push(String(this.refId))
       this.increaseRefId()
