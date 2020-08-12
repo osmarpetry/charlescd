@@ -25,21 +25,18 @@ import { periodFilterItems } from './constants';
 import Styled from './styled';
 import CircleFilter from './CircleFilter';
 import ChartMenu from './ChartMenu';
-import { getDeploySeries, getPlotOption } from './helpers';
+import { getDeploySeries } from './helpers';
 import { humanizeDateFromSeconds } from 'core/utils/date';
-import isUndefined from 'lodash/isUndefined';
 import ReleasesHistoryComponent from './Release';
 import { ReleaseHistoryRequest } from './interfaces';
+import Chart from 'react-google-charts';
 
 const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
   const { control, handleSubmit, getValues, setValue } = useForm();
   const deploySeries = getDeploySeries(response);
 
-  const plotOptions = getPlotOption(deploySeries);
-  const deployChartOption = isUndefined(plotOptions)
-    ? deployOptions
-    : { ...deployOptions, plotOptions };
+  console.log(deploySeries); // remove log
 
   useEffect(() => {
     searchDeployMetrics({ period: periodFilterItems[0].value });
@@ -55,10 +52,6 @@ const Deploys = () => {
     const circleIds = normalizeCircleParams(circles);
     setFilter({ period, circles: circleIds });
     searchDeployMetrics({ period, circles: circleIds });
-  };
-
-  const resetChart = (chartId: string) => {
-    window.ApexCharts.exec(chartId, 'resetSeries');
   };
 
   return (
@@ -116,12 +109,27 @@ const Deploys = () => {
         </Styled.Card>
       </Styled.Plates>
       <Styled.Card width="1220px" height="521px" data-testid="apexchart-deploy">
-        <ChartMenu onReset={() => resetChart('chartDeploy')} />
-        <Styled.MixedChart
-          options={deployChartOption}
-          series={deploySeries}
+        <Styled.ChartHeader>
+          <div>
+            <Text.h2 color="light" weight="bold">
+              Deploy
+            </Text.h2>
+            <Text.h6 color="dark">One Week</Text.h6>
+            <ChartMenu onReset={() => console.log('reset')} />
+          </div>
+          <Styled.Dot status="deployed" />
+          <Text.h5 color="dark">Deployed</Text.h5>
+          <Styled.Dot status="deploying" />
+          <Text.h5 color="dark">Deploying</Text.h5>
+        </Styled.ChartHeader>
+        <Chart
           width={1180}
           height={495}
+          chartType="ComboChart"
+          loader={<div>Loading Chart</div>}
+          data={deploySeries}
+          options={deployOptions}
+          rootProps={{ 'data-testid': '1' }}
         />
       </Styled.Card>
       <ReleasesHistoryComponent filter={filter} />
