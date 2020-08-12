@@ -15,7 +15,7 @@
  */
 
 import styled from 'styled-components';
-import { MixedChart as MixedChartComponent } from 'core/components/Charts';
+import Chart from 'react-google-charts';
 import ComponentButton from 'core/components/Button';
 import SelectComponent from 'core/components/Form/Select';
 
@@ -58,13 +58,12 @@ const Card = styled.div<Card>`
   border-radius: 4px;
   box-sizing: border-box;
   position: relative;
+
+  div.google-visualization-tooltip {
+    background: transparent !important;
 `;
 
-const MixedChart = styled(MixedChartComponent)`
-  .apexcharts-gridlines-horizontal > .apexcharts-gridline {
-    opacity: 0.2;
-  }
-`;
+const ChartHeader = styled.div``;
 
 const StyledSelect = `
   width: 200px;
@@ -108,11 +107,11 @@ export default {
   Content,
   Card,
   Plates,
-  MixedChart,
   SingleSelect,
   MultiSelect,
   Button,
   FilterForm,
   ChartControls,
-  ChartMenu
+  ChartMenu,
+  ChartHeader
 };
