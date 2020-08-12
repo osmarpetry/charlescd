@@ -15,7 +15,6 @@
  */
 
 import styled from 'styled-components';
-import { MixedChart as MixedChartComponent } from 'core/components/Charts';
 import ComponentButton from 'core/components/Button';
 import SelectComponent from 'core/components/Form/Select';
 
@@ -58,13 +57,12 @@ const Card = styled.div<Card>`
   border-radius: 4px;
   box-sizing: border-box;
   position: relative;
+
+  div.google-visualization-tooltip {
+    background: transparent !important;
 `;
 
-const MixedChart = styled(MixedChartComponent)`
-  .apexcharts-gridlines-horizontal > .apexcharts-gridline {
-    opacity: 0.2;
-  }
-`;
+const ChartHeader = styled.div``;
 
 const StyledSelect = `
   width: 200px;
@@ -104,15 +102,47 @@ const ChartMenu = styled.div`
   z-index: 999;
 `;
 
+interface Dot {
+  status: string;
+}
+
+const Dot = styled.div<Dot>`
+  height: 15px;
+  width: 15px;
+  background-color: ${({ theme, status }) =>
+    theme.metrics.dashboard.chart[status]};
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+`;
+
+const ChartTitle = styled.div`
+  span {
+    margin-bottom: 5px;
+  }
+`;
+
+const ChartLengend = styled.div`
+  display: flex;
+  padding-top: 10px;
+
+  span {
+    margin-right: 15px;
+  }
+`;
+
 export default {
   Content,
   Card,
   Plates,
-  MixedChart,
   SingleSelect,
   MultiSelect,
   Button,
   FilterForm,
   ChartControls,
-  ChartMenu
+  ChartMenu,
+  ChartHeader,
+  ChartLengend,
+  ChartTitle,
+  Dot
 };
