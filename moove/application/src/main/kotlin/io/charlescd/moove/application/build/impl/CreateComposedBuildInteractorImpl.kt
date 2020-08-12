@@ -147,6 +147,14 @@ open class CreateComposedBuildInteractorImpl @Inject constructor(
         moduleSnapshot: ModuleSnapshot,
         request: CreateComposedBuildRequest
     ): ModuleSnapshot {
+        println(moduleSnapshot.copy(
+            components = moduleSnapshot.components.map { componentSnapshot ->
+                copyComponentSnapshot(
+                    componentSnapshot,
+                    findComponentRequest(module.id, componentSnapshot.componentId, request)
+                )
+            }
+        ))
         return moduleSnapshot.copy(
             components = moduleSnapshot.components.map { componentSnapshot ->
                 copyComponentSnapshot(
