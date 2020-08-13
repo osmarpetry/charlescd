@@ -221,6 +221,10 @@ publicConstraints:
     methods:
       - GET
 
+  - pattern: /v2/users/password
+    methods:
+      - PUT
+
   - pattern: /v2/deployments/{id:.+}/callback
     methods:
       - POST
@@ -230,5 +234,21 @@ publicConstraints:
       - POST
 
   - pattern: /actuator/health
+    methods:
+      - GET
+
+  - pattern: /swagger-ui.html
+    methods:
+      - GET
+
+  - pattern: /webjars/**
+    methods:
+      - GET
+
+  - pattern: /swagger-resources/**
+    methods:
+      - GET
+
+  - pattern: /v2/api-docs
     methods:
       - GET
