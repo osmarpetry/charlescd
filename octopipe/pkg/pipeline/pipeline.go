@@ -23,6 +23,7 @@ import (
 	"octopipe/pkg/repository/github"
 	"octopipe/pkg/template"
 	"octopipe/pkg/template/helm"
+	"strings"
 )
 
 type NonAdjustablePipelineVersion struct {
@@ -133,7 +134,8 @@ func (deprecatedPipeline NonAdjustablePipeline) generateVersionSteps(versions []
 						"Name":      version.Version,
 						"Namespace": deprecatedPipeline.AppNamespace,
 						"image.tag": version.VersionURL,
-						"circle": deprecatedPipeline.CircleID,
+						"circleId": deprecatedPipeline.CircleID,
+						"version": version.Version[0:strings.LastIndex(version.Version,"-")],
 					},
 				},
 			},
