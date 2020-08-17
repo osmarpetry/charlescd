@@ -38,6 +38,7 @@ import {
 import { ComponentUndeploymentsRepository } from '../repository'
 import { PipelineErrorHandlerService } from './pipeline-error-handler.service'
 import { CallbackTypeEnum } from '../../notifications/enums/callback-type.enum'
+import { IDeploymentVersion, IPipelineOptions } from '../../components/interfaces'
 
 @Injectable()
 export class PipelineDeploymentsService {
@@ -314,4 +315,5 @@ export class PipelineDeploymentsService {
       gatewayName
     }
   }
+
 }
