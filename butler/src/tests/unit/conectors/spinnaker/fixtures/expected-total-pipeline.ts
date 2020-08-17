@@ -100,7 +100,8 @@ const expectedTotalPipeline = {
       outputName: 'app-name-v1',
       overrides: {
         'image.tag': '/v1',
-        'name': 'v1'
+        'name': 'v1',
+        'circleId': 'circle-id'
       },
       refId: '1',
       requisiteStageRefIds: [],
