@@ -27,6 +27,8 @@ import baseDeleteDeployments from '../utils/manifests/base-delete-deployment'
 import baseDeployment from '../utils/manifests/base-deployment'
 import createDestinationRules from '../utils/manifests/base-destination-rules'
 import { createVirtualService, createEmptyVirtualService } from '../utils/manifests/base-virtual-service'
+import { AppConstants } from '../../../../../constants'
+import { IDeploymentVersion, IPipelineCircle } from '../../../../../../api/components/interfaces'
 
 export default class TotalPipeline {
   refId: number
@@ -35,6 +37,7 @@ export default class TotalPipeline {
   deploymentsIds: string[]
   contract: ISpinnakerPipelineConfiguration
   basePipeline: IBaseSpinnakerPipeline
+
   constructor(contract: ISpinnakerPipelineConfiguration) {
     this.refId = 1
     this.previousStage = ''
@@ -88,9 +91,12 @@ export default class TotalPipeline {
   }
 
   private buildDeployments(): IDeploymentReturn | undefined {
-    if (this.contract.versions.length === 0) { return }
+    if (this.contract.versions.length === 0) {
+      return
+    }
 
-    this.contract.versions.forEach(version => {
+    this.contract.circles.forEach(circle => {
+      const version = this.getVersionCircle(this.contract.versions, circle)
       const helmStage = baseStageHelm(
         this.contract,
         this.contract.githubAccount,
@@ -98,7 +104,8 @@ export default class TotalPipeline {
         version.versionUrl,
         String(this.refId),
         [],
-        undefined
+        undefined,
+        circle.header ? circle.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID
       )
       this.basePipeline.stages.push(helmStage)
       this.increaseRefId()
@@ -222,5 +229,12 @@ export default class TotalPipeline {
       previousStage: this.previousStage,
       deploymentsIds: this.deploymentsIds
     }
+  }
+
+  private getVersionCircle(versions: IDeploymentVersion[], circle: IPipelineCircle): IDeploymentVersion {
+    const versionsSearch = versions.find(
+      octopipeVersion => octopipeVersion.version === circle.destination.version
+    )
+    return { versionUrl: versionsSearch?.versionUrl || '', version: versionsSearch?.version || '' }
   }
 }

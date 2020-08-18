@@ -32,7 +32,7 @@ it('compiles the pipeline', () => {
     webhookUri: 'webhook.uri',
     versions: [{ version: 'v1', versionUrl: '/v1' }],
     unusedVersions: [{ version: 'v2', versionUrl: '/v2' }],
-    circles: [{ destination: { version: 'v3' } }],
+    circles: [{ destination: { version: 'v1' } }],
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
     circleId: 'circle-id',
