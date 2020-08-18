@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { AppConstants } from '../../../../../app/v1/core/constants'
+
 const expectedTotalPipeline = {
   appConfig: {},
   application: 'application-name',
@@ -100,7 +102,9 @@ const expectedTotalPipeline = {
       outputName: 'app-name-v1',
       overrides: {
         'image.tag': '/v1',
-        'name': 'v1'
+        'name': 'v1',
+        'circleId': AppConstants.DEFAULT_CIRCLE_ID,
+        'suffix' : '-f5d23a57'
       },
       refId: '1',
       requisiteStageRefIds: [],
