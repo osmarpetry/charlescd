@@ -14,4 +14,13 @@
  * limitations under the License.
  */
 
-export const FORM_METRIC_PROVIDER = 'metric-provider';
+import { COLOR_BASTILLE, COLOR_BLACK_MARLIN } from '../colors';
+
+export const light = {};
+
+export const dark = {
+  content: {
+    background: COLOR_BASTILLE,
+    card: COLOR_BLACK_MARLIN
+  }
+};
