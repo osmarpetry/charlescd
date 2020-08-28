@@ -34,13 +34,10 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
     private Client client;
     private String baseAddress;
 
-    public DockerRegistryHttpApiV2Client() {
-        this.client = ClientBuilder.newClient();
-    }
-
     public void configureAuthentication(RegistryType type,
                                         DockerRegistryConfigurationEntity.DockerRegistryConnectionData config) {
         this.baseAddress = config.address;
+        this.client = ClientBuilder.newClient();
 
         switch (type) {
             case AWS:
@@ -65,9 +62,13 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
     @Override
     public Optional<Response> getImage(String name, String tagName) {
 
-        String url = createGetImageUrl(this.baseAddress, name, tagName);
-
-        return Optional.ofNullable(this.client.target(url).request().get());
+        try {
+          String url = createGetImageUrl(this.baseAddress, name, tagName);
+          
+          return Optional.ofNullable(this.client.target(url).request().get());
+        } finally {
+          this.client.close();
+        }
 
     }
 
