@@ -16,6 +16,12 @@
 
 package io.charlescd.circlematcher.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import java.time.LocalDateTime;
+
 public class Segmentation {
 
     private String name;
@@ -32,6 +38,10 @@ public class Segmentation {
 
     private Boolean isDefault;
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime createdAt;
+
     public Segmentation() {
     }
 
@@ -41,7 +51,8 @@ public class Segmentation {
                         String circleId,
                         SegmentationType type,
                         String workspaceId,
-                        Boolean isDefault) {
+                        Boolean isDefault,
+                        LocalDateTime createdAt) {
         this.name = name;
         this.node = node;
         this.reference = reference;
@@ -49,6 +60,7 @@ public class Segmentation {
         this.type = type;
         this.workspaceId = workspaceId;
         this.isDefault = isDefault;
+        this.createdAt = createdAt;
     }
 
     public static Segmentation of(KeyMetadata metadata) {
@@ -59,7 +71,8 @@ public class Segmentation {
                 metadata.getCircleId(),
                 metadata.getType(),
                 metadata.getWorkspaceId(),
-                metadata.getIsDefault());
+                metadata.getIsDefault(),
+                metadata.getCreatedAt());
     }
 
     public String getName() {
@@ -84,6 +97,14 @@ public class Segmentation {
 
     public String getWorkspaceId() {
         return workspaceId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Boolean getIsDefault() {
