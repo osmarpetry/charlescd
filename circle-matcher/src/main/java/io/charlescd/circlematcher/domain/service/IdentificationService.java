@@ -18,10 +18,11 @@ package io.charlescd.circlematcher.domain.service;
 
 import io.charlescd.circlematcher.api.request.IdentificationRequest;
 import io.charlescd.circlematcher.domain.Circle;
-import java.util.Set;
+
+import java.util.LinkedHashSet;
 
 public interface IdentificationService {
 
-    Set<Circle> identify(IdentificationRequest request);
+    LinkedHashSet<Circle> identify(IdentificationRequest request);
 
 }
