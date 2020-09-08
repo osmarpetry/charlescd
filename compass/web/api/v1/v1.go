@@ -7,8 +7,9 @@ import (
 	"compass/internal/plugin"
 	"compass/pkg/logger"
 	"fmt"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -20,6 +21,7 @@ type UseCases interface {
 	NewMetricApi(metricMain metric.UseCases, metricGroupMain metricsgroup.UseCases) MetricApi
 	NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi
 	NewCircleApi(circleMain metricsgroup.UseCases) CircleApi
+	NewApplicationHealthApi(healthMain applicationhealth.) ApplicationHealthApi
 }
 
 type V1 struct {
