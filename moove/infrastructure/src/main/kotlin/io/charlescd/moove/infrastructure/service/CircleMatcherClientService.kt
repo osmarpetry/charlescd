@@ -38,14 +38,14 @@ class CircleMatcherClientService(
 ) : CircleMatcherService {
 
     override fun create(circle: Circle, matcherUri: String) {
-        this.circleMatcherClient.create(URI(matcherUri), createMatcherRequest(circle))
+        this.circleMatcherClient.create(URI(matcherUri), createMatcherRequest(circle, false))
     }
 
-    override fun update(circle: Circle, previousReference: String, matcherUri: String) {
+    override fun update(circle: Circle, previousReference: String, matcherUri: String, isActive: Boolean) {
         this.circleMatcherClient.update(
             URI(matcherUri),
             previousReference,
-            createMatcherRequest(circle, previousReference)
+            createMatcherRequest(circle, isActive, previousReference)
         )
     }
 
@@ -74,6 +74,7 @@ class CircleMatcherClientService(
         ).circles.map { SimpleCircle(it.id, it.name) }
     }
 
+
     private fun createImportRequest(
         nodes: List<JsonNode>,
         circle: Circle
@@ -92,11 +93,12 @@ class CircleMatcherClientService(
             circleId = circle.id,
             type = circle.matcherType.name,
             workspaceId = circle.workspaceId,
-            isDefault = circle.defaultCircle
+            isDefault = circle.defaultCircle,
+            active = false
         )
 
-    private fun createMatcherRequest(circle: Circle, previousReference: String? = null) =
-        CircleMatcherRequest(
+    private fun createMatcherRequest(circle: Circle, isActive:Boolean, previousReference: String? = null): CircleMatcherRequest =
+         CircleMatcherRequest(
             name = circle.name,
             reference = circle.reference,
             previousReference = previousReference,
@@ -109,6 +111,8 @@ class CircleMatcherClientService(
             circleId = circle.id,
             type = circle.matcherType.name,
             workspaceId = circle.workspaceId,
-            isDefault = circle.defaultCircle
+            isDefault = circle.defaultCircle,
+            active = isActive
         )
+
 }
