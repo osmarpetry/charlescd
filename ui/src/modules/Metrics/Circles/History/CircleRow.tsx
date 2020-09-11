@@ -14,27 +14,33 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 import Text from 'core/components/Text';
 import Styled from './styled';
 import { getStatus } from '../../helpers';
-import CircleReleasesTable from './CircleReleasesTable';
 import { CircleHistory } from '../interfaces';
-import { humanizeDateFromSeconds, dateTimeFormatter } from 'core/utils/date';
+import routes from 'core/constants/routes';
+import {
+  humanizeDurationFromSeconds,
+  dateTimeFormatter
+} from 'core/utils/date';
 
 type Props = {
   circle: CircleHistory;
 };
 
 const CircleRow = ({ circle }: Props) => {
-  const [activeRow, setActiveRow] = useState(false);
+  const history = useHistory();
 
   return (
     <Styled.CircleRow>
       <Styled.StatusLine status={getStatus(circle?.status)} />
       <Styled.TableRow
-        onClick={() => setActiveRow(!activeRow)}
         data-testid={`circle-row-${circle.id}`}
+        onClick={() =>
+          history.push(`${routes.circlesComparation}?circle=${circle.id}`)
+        }
       >
         <Styled.TableColumn>
           <Text.h5 color="light">{circle.name}</Text.h5>
@@ -46,15 +52,10 @@ const CircleRow = ({ circle }: Props) => {
         </Styled.TableColumn>
         <Styled.TableColumn>
           <Text.h5 color="light">
-            {humanizeDateFromSeconds(circle.lifeTime)}
+            {humanizeDurationFromSeconds(circle.lifeTime)}
           </Text.h5>
         </Styled.TableColumn>
       </Styled.TableRow>
-      {activeRow && (
-        <Styled.ReleasesWrapper>
-          <CircleReleasesTable circleId={circle.id} />
-        </Styled.ReleasesWrapper>
-      )}
     </Styled.CircleRow>
   );
 };
