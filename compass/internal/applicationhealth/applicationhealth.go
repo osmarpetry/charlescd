@@ -13,31 +13,26 @@ import (
 
 type ApplicationHealth struct {
 	requests RequestsMetric
-	latency HealthMetric
-	errors HealthMetric
+	latency  HealthMetric
+	errors   HealthMetric
 }
 
-type RequestsMetric struct{
+type RequestsMetric struct {
 	value int32
-	unit string
+	unit  string
 }
 
-type HealthMetric struct{
-    unit string
-    circleComponents []ComponentHealth
+type HealthMetric struct {
+	unit             string
+	circleComponents []ComponentHealth
 }
 
-type ComponentHealth struct{
-    name string
-    threshold int32
-    value float32
-	status string
+type ComponentHealth struct {
+	name      string
+	threshold int32
+	value     float32
+	status    string
 }
-
- type healthStatus struct{
-	 const failed string = ""
- }
-
 
 func (main Main) basicHealth(circleID string, workspaceID string) {
 
