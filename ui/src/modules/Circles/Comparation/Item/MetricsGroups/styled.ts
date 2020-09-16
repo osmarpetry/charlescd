@@ -34,6 +34,10 @@ interface ButtonIconProps {
   isActive: boolean;
 }
 
+interface FilterOpenProps {
+  isOpen: boolean;
+}
+
 interface ThresholdIconProps {
   color: string;
   hasTreshold: boolean;
@@ -268,8 +272,13 @@ const MetricLastValue = styled.div<ThresholdIconProps>`
 
 const MonitoringMetricsContent = styled.div``;
 
-const MonitoringMetricsFilter = styled.div`
-  padding-top: 10px;
+const MonitoringMetricsFilter = styled.div<FilterOpenProps>`
+  padding-top: ${({ isOpen }) => isOpen && '10px'};
+  display: flex;
+
+  > * {
+    margin-right: 20px;
+  }
 `;
 
 const MonitoringMetricsPeriodFilter = styled.div`
@@ -306,6 +315,20 @@ const FieldErrorWrapper = styled.div`
 
   span {
     margin-left: 5px;
+  }
+`;
+
+const MultiSelect = styled(SelectComponent.MultiCheck)`
+  width: 115px;
+  padding: 0 0 15px 0;
+
+  div:first-child {
+    background: transparent;
+    border-bottom: none;
+  }
+
+  svg > * + * {
+    display: none;
   }
 `;
 
@@ -347,5 +370,6 @@ export default {
   MonitoringMetricsFilter,
   MonitoringMetricsPeriodFilter,
   ButtonIconRoundedPeriod,
-  FieldErrorWrapper
+  FieldErrorWrapper,
+  MultiSelect
 };
