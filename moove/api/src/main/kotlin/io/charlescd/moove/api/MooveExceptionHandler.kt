@@ -23,9 +23,7 @@ import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
-import java.util.*
-import javax.servlet.http.HttpServletRequest
-import kotlin.collections.LinkedHashMap
+import io.charlescd.moove.domain.exceptions.UnauthorizedException
 import org.slf4j.LoggerFactory
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
@@ -39,6 +37,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.multipart.support.MissingServletRequestPartException
+import java.util.*
+import javax.servlet.http.HttpServletRequest
+import kotlin.collections.LinkedHashMap
 
 @ControllerAdvice
 class MooveExceptionHandler(private val messageSource: MessageSource) {
@@ -105,6 +106,14 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
             ex.getParameters()
                 ?.let { messageSource.getMessage(ex.getErrorCode().key, ex.getParameters(), Locale.ENGLISH) }
                 ?: ex.message)
+    }
+
+    @ExceptionHandler(UnauthorizedException::class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    fun unauthorizedException(request: HttpServletRequest, ex: UnauthorizedException): ErrorMessageResponse {
+        this.logger.error(ex.message, ex)
+        return ErrorMessageResponse.of(MooveErrorCode.NOT_AUTHORIZED, ex.message!!)
     }
 
     @ExceptionHandler(BusinessExceptionLegacy::class)
