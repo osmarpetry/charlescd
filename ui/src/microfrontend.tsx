@@ -14,28 +14,21 @@
  * limitations under the License.
  */
 
-import { User } from 'modules/Users/interfaces/User';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import SingleSpaReact from 'single-spa-react';
+import { setPublicPath } from 'systemjs-webpack-interop';
+import App from './App';
 
-export const profileKey = 'profile';
+setPublicPath('@devcraft/charlescd');
 
-export const getProfile = () => {
-  try {
-    const profile = localStorage.getItem(profileKey);
-    return JSON.parse(atob(profile));
-  } catch (e) {
-    return {};
-  }
-};
+const lifeCycle = SingleSpaReact({
+  React,
+  ReactDOM,
+  rootComponent: App,
+  domElementGetter: () => document.getElementById('content')
+});
 
-export const getProfileByKey = (key: string) => {
-  const profile = getProfile();
-
-  return profile[key];
-};
-
-export const clearProfile = () => localStorage.removeItem(profileKey);
-
-export const saveProfile = (profile: User) => {
-  const profileBase64 = btoa(JSON.stringify(profile));
-  localStorage.setItem(profileKey, profileBase64);
-};
+export const bootstrap = lifeCycle.bootstrap;
+export const mount = lifeCycle.mount;
+export const unmount = lifeCycle.unmount;
