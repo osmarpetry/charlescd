@@ -20,10 +20,11 @@ package tests
 
 import (
 	"compass/internal/plugin"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 )
 
 type SuitePlugins struct {
@@ -43,6 +44,10 @@ func TestInitPlugins(t *testing.T) {
 
 func (s *SuitePlugins) TestFindAll() {
 	expectedPlugins := []plugin.Plugin{
+		{
+			Name: "Google Analytics",
+			Src:  "google_analytics",
+		},
 		{
 			Name: "Prometheus",
 			Src:  "prometheus",
