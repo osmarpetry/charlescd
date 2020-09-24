@@ -235,12 +235,12 @@ func (main Main) RemoveMetric(id string) error {
 	return nil
 }
 
-func (main Main) getQueryByMetric(metric Metric) []byte {
+func (main Main) getQueryByMetric(metric Metric) string {
 	if metric.Query != "" {
-		return []byte(metric.Query)
+		return metric.Query
 	}
 
-	return []byte(metric.Metric)
+	return metric.Metric
 }
 
 func (main Main) ResultQuery(metric Metric) (float64, error) {
@@ -274,10 +274,14 @@ func (main Main) ResultQuery(metric Metric) (float64, error) {
 		})
 	}
 
-	return getQuery.(func(datasourceConfiguration, metric []byte, filters []datasource.MetricFilter) (float64, error))(dataSourceConfigurationData, query, metric.Filters)
+	return getQuery.(func(request datasource.ResultRequest) (float64, error))(datasource.ResultRequest{
+		dataSourceConfigurationData,
+		query,
+		metric.Filters,
+	})
 }
 
-func (main Main) Query(metric Metric, period, interval string) (interface{}, error) {
+func (main Main) Query(metric Metric, period, interval datasource.Period) (interface{}, error) {
 	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
 	if err != nil {
 		notFoundErr := errors.New("Not found data source: " + metric.DataSourceID.String())
@@ -308,5 +312,13 @@ func (main Main) Query(metric Metric, period, interval string) (interface{}, err
 		})
 	}
 
-	return getQuery.(func(datasourceConfiguration, query, period, interval []byte, filters []datasource.MetricFilter) ([]datasource.Value, error))(dataSourceConfigurationData, query, []byte(period), []byte(interval), metric.Filters)
+	return getQuery.(func(request datasource.QueryRequest) ([]datasource.Value, error))(datasource.QueryRequest{
+		datasource.ResultRequest{
+			dataSourceConfigurationData,
+			query,
+			metric.Filters,
+		},
+		period,
+		interval,
+	})
 }
