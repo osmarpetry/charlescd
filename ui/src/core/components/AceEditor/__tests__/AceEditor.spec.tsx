@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package io.charlescd.villager.infrastructure.integration.registry;
+import React from 'react';
+import { render } from 'unit-test/testUtils';
+import AceEditor from '../';
 
-public enum RegistryType {
-
-    AWS, AZURE, GCP, DOCKER_HUB, UNSUPPORTED
-
+const props = {
+  mode: "json",
 }
+
+test('render Ace Editor', () => {
+
+  const { container } = render(
+    <AceEditor {...props} />
+  );
+
+  expect(container.innerHTML).toMatch("ace-editor")
+});
