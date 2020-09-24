@@ -14,10 +14,27 @@
  * limitations under the License.
  */
 
-package io.charlescd.villager.infrastructure.integration.registry;
+import React from 'react';
+import { render, fireEvent, wait } from 'unit-test/testUtils';
+import AceEditorForm from '..';
+import {Control, useForm} from 'react-hook-form'
 
-public enum RegistryType {
+jest.mock('react-hook-form', () => {
+  return {
+    __esModule: true,
+    Controller: ({as}: any) => (
+      <>
+        {as}
+      </>
+    )
+  };
+});
 
-    AWS, AZURE, GCP, DOCKER_HUB, UNSUPPORTED
+test('renders AceEditor component inside Controller', () => {
+  const controlMock:Control = null;
+  const { container } = render(
+    <AceEditorForm control={controlMock} name="keyName" mode="json" />
+  );
 
-}
+  expect(container.innerHTML).toMatch('ace-editor');
+});

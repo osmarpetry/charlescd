@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -140,21 +141,21 @@ public class UpdateBuildInfoInteractorImpl implements UpdateBuildInfoInteractor 
     }
 
     private boolean componentIsPresent(ComponentEntity component, String registryConfigurationId) {
-        var optionalEntity = this.dockerRegistryConfigurationRepository.findById(registryConfigurationId);
-        var entity = optionalEntity
+        var entity =
+                this.dockerRegistryConfigurationRepository.findById(registryConfigurationId)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
 
         try {
-            this.registryClient.configureAuthentication(entity.type, entity.connectionData);
+            this.registryClient.configureAuthentication(entity.type, entity.connectionData, component.tagName);
 
             // TODO: Verificar necessidade de serializacao
-            return registryClient.getImage(component.name, component.tagName).isPresent()
-                    && registryClient.getImage(component.name, component.tagName).get().getStatus() == 200;
+            return registryClient.getImage(component.name, component.tagName, entity.connectionData).isPresent()
+                    && registryClient.getImage(component.name, component.tagName, entity.connectionData)
+                    .get().getStatus() == 200;
         } finally {
             this.registryClient.closeQuietly();
         }
-
     }
 
 }
