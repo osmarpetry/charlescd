@@ -16,6 +16,13 @@
 
 package io.charlescd.circlematcher.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
+import java.time.LocalDateTime;
+
 public class KeyMetadata {
 
     private String reference;
@@ -32,6 +39,8 @@ public class KeyMetadata {
 
     private Boolean isDefault;
 
+    private LocalDateTime createdAt;
+
     public KeyMetadata() {
     }
 
@@ -43,6 +52,7 @@ public class KeyMetadata {
         this.name = segmentation.getName();
         this.workspaceId = segmentation.getWorkspaceId();
         this.isDefault = segmentation.getIsDefault();
+        this.createdAt = segmentation.getCreatedAt();
     }
 
     public String getReference() {
@@ -71,5 +81,13 @@ public class KeyMetadata {
 
     public Boolean getIsDefault() {
         return isDefault;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
