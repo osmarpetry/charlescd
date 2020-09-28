@@ -18,12 +18,16 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactTooltip from 'react-tooltip';
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
+import { normalizeSelectOptionsNickname } from 'core/utils/select';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Modal from 'core/components/Modal';
 import Dropdown from 'core/components/Dropdown';
 import NewDropDown from 'core/components/Dropdown/NewDropDown';
+import CustomOption from 'core/components/Form/Select/CustomOptions';
+import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
 import { Metric, MetricsGroup } from './types';
 import {
   useCreateMetricsGroup,
@@ -46,8 +50,13 @@ type ChartOpen = {
   [key: string]: boolean;
 };
 
+type ChartFilter = {
+  [key: string]: object[];
+};
+
 const MetricsGroups = ({ onGoBack, id }: Props) => {
   const [groupChartOpen, setGroupChartOpen] = useState<ChartOpen>({});
+  const [selectMetric, setSelectMetric] = useState<ChartFilter>({});
   const [showAddMetricForm, setShowAddMetricForm] = useState(false);
   const [toggleModal, setToggleModal] = useState(false);
   const [activeMetricsGroup, setActiveMetricsGroup] = useState<MetricsGroup>();
@@ -60,6 +69,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
   const { deleteMetric } = useDeleteMetric();
   const { getMetricsGroups, metricsGroups, status } = useMetricsGroups();
   const {
+    control,
     register,
     handleSubmit,
     formState: { isValid }
@@ -118,6 +128,16 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     }));
   };
 
+  const toggleMetricGroupFilter = (
+    metricGroupId: string,
+    filters: object[]
+  ) => {
+    setSelectMetric(previous => ({
+      ...previous,
+      [metricGroupId]: filters
+    }));
+  };
+
   const getMetricCondition = (condition: string) => {
     const textByCondition = {
       EQUAL: 'Equal:',
@@ -126,6 +146,13 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     } as Record<string, string>;
 
     return textByCondition[condition] ?? 'Not configured';
+  };
+
+  const renderLabelText = (metricGroupId: string) => {
+    if (isUndefined(selectMetric[metricGroupId])) return false;
+    if (isEmpty(selectMetric[metricGroupId])) return true;
+
+    return false;
   };
 
   const renderModal = () =>
@@ -209,50 +236,82 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     });
 
   const renderMetricsGroupsCards = () =>
-    metricsGroups.map(metricGroup => (
-      <Styled.MetricsGroupsCard key={metricGroup.id}>
-        <Styled.MetricsGroupsCardHeader>
-          <Text.h2 color="light" title={metricGroup.name}>
-            {metricGroup.name}
-          </Text.h2>
-          <Dropdown icon="vertical-dots" size="16px">
-            <Dropdown.Item
-              icon="add"
-              name="Add metric"
-              onClick={() => handleAddMetric(metricGroup)}
-            />
-            <Dropdown.Item
-              icon="delete"
-              name="Delete"
-              onClick={() => handleDeleteMetricsGroup(metricGroup.id)}
-            />
-          </Dropdown>
-        </Styled.MetricsGroupsCardHeader>
-        {!isEmpty(metricGroup.metrics) && (
-          <>
-            <Styled.MonitoringMetricsFilter>
-              <LabeledIcon
-                icon={groupChartOpen[metricGroup.id] ? 'view' : 'no-view'}
-                onClick={() => toggleMetricGroupChart(metricGroup.id)}
+    metricsGroups.map(metricGroup => {
+      const normalizedSelectOptions = normalizeSelectOptionsNickname(
+        metricGroup.metrics
+      );
+
+      return (
+        <Styled.MetricsGroupsCard key={metricGroup.id}>
+          <Styled.MetricsGroupsCardHeader>
+            <Text.h2 color="light" title={metricGroup.name}>
+              {metricGroup.name}
+            </Text.h2>
+            <Dropdown icon="vertical-dots" size="16px">
+              <Dropdown.Item
+                icon="add"
+                name="Add metric"
+                onClick={() => handleAddMetric(metricGroup)}
+              />
+              <Dropdown.Item
+                icon="delete"
+                name="Delete"
+                onClick={() => handleDeleteMetricsGroup(metricGroup.id)}
+              />
+            </Dropdown>
+          </Styled.MetricsGroupsCardHeader>
+          {!isEmpty(metricGroup.metrics) && (
+            <>
+              <Styled.MonitoringMetricsFilter
+                isOpen={!groupChartOpen[metricGroup.id]}
               >
-                <Text.h5 color="dark">View Chart</Text.h5>
-              </LabeledIcon>
-            </Styled.MonitoringMetricsFilter>
-            {groupChartOpen[metricGroup.id] && (
-              <MonitoringMetrics metricsGroupId={metricGroup.id} />
-            )}
-            <Styled.MetricCardTableHead>
-              <Text.h5 color="dark">Nickname</Text.h5>
-              <Text.h5 color="dark">Condition Threshold</Text.h5>
-              <Text.h5 color="dark">Last Value</Text.h5>
-            </Styled.MetricCardTableHead>
-            <Styled.MetricsGroupsCardContent>
-              {renderMetrics(metricGroup)}
-            </Styled.MetricsGroupsCardContent>
-          </>
-        )}
-      </Styled.MetricsGroupsCard>
-    ));
+                <LabeledIcon
+                  isActive={groupChartOpen[metricGroup.id]}
+                  icon={groupChartOpen[metricGroup.id] ? 'view' : 'no-view'}
+                  onClick={() => toggleMetricGroupChart(metricGroup.id)}
+                >
+                  <Text.h5
+                    color={groupChartOpen[metricGroup.id] ? 'light' : 'dark'}
+                  >
+                    View Chart
+                  </Text.h5>
+                </LabeledIcon>
+                {groupChartOpen[metricGroup.id] && (
+                  <LabeledIcon icon="filter" isActive={true}>
+                    <Styled.MultiSelect
+                      control={control}
+                      name="metrics"
+                      isLoading={status.isPending}
+                      customOption={CustomOption.Check}
+                      options={normalizedSelectOptions}
+                      label={
+                        renderLabelText(metricGroup.id) && 'Select metrics'
+                      }
+                      defaultValue={[allOption]}
+                      onChange={e => toggleMetricGroupFilter(metricGroup.id, e)}
+                    />
+                  </LabeledIcon>
+                )}
+              </Styled.MonitoringMetricsFilter>
+              {groupChartOpen[metricGroup.id] && (
+                <MonitoringMetrics
+                  metricsGroupId={metricGroup.id}
+                  selectFilters={selectMetric[metricGroup.id]}
+                />
+              )}
+              <Styled.MetricCardTableHead>
+                <Text.h5 color="dark">Nickname</Text.h5>
+                <Text.h5 color="dark">Condition Threshold</Text.h5>
+                <Text.h5 color="dark">Last Value</Text.h5>
+              </Styled.MetricCardTableHead>
+              <Styled.MetricsGroupsCardContent>
+                {renderMetrics(metricGroup)}
+              </Styled.MetricsGroupsCardContent>
+            </>
+          )}
+        </Styled.MetricsGroupsCard>
+      );
+    });
 
   return !showAddMetricForm ? (
     <>
