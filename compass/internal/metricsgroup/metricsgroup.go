@@ -28,6 +28,7 @@ import (
 	"io"
 	"regexp"
 	"sort"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -90,26 +91,36 @@ func (c Condition) String() string {
 	return [...]string{"EQUAL", "GREATER_THAN", "LOWER_THAN"}[c]
 }
 
-func (main Main) PeriodValidate(currentPeriod string) error {
+func (main Main) PeriodValidate(currentPeriod string) (datasource.Period, error) {
 	reg, err := regexp.Compile("[0-9]")
 	if err != nil {
 		logger.Error(util.PeriodValidateRegexError, "PeriodValidate", err, currentPeriod)
-		return errors.New("Invalid period or interval")
+		return datasource.Period{}, errors.New("Invalid period or interval")
 	}
 
 	if currentPeriod != "" && !reg.Match([]byte(currentPeriod)) {
 		logger.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
-		return errors.New("Invalid period or interval: not found number")
+		return datasource.Period{}, errors.New("Invalid period or interval: not found number")
 	}
 
 	unit := reg.ReplaceAllString(currentPeriod, "")
 	_, ok := Periods[unit]
 	if !ok && currentPeriod != "" {
 		logger.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
-		return errors.New("Invalid period or interval: not found unit")
+		return datasource.Period{}, errors.New("Invalid period or interval: not found unit")
 	}
 
-	return nil
+	valueReg := regexp.MustCompile("[A-Za-z]").Split(currentPeriod, -1)
+
+	value, err := strconv.Atoi(valueReg[0])
+	if err != nil {
+		return datasource.Period{}, err
+	}
+
+	return datasource.Period{
+		Value: int64(value),
+		Unit:  unit,
+	}, nil
 }
 
 func (main Main) Parse(metricsGroup io.ReadCloser) (MetricsGroup, error) {
@@ -270,7 +281,7 @@ func (main Main) Remove(id string) error {
 	return nil
 }
 
-func (main Main) QueryByGroupID(id, period, interval string) ([]datasource.MetricValues, error) {
+func (main Main) QueryByGroupID(id string, period, interval datasource.Period) ([]datasource.MetricValues, error) {
 	var metricsValues []datasource.MetricValues
 	metricsGroup, err := main.FindById(id)
 	if err != nil {

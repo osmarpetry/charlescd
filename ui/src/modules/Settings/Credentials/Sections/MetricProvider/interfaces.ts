@@ -30,6 +30,18 @@ export interface MetricProvider {
   url: string;
 }
 
+export interface Datasource {
+  id: string;
+  name: string;
+  pluginSrc: string;
+  healthy: boolean;
+}
+
+export interface Plugin {
+  name: string;
+  src: string;
+}
+
 export interface TestConnectionResponse {
   status?: string;
 }
