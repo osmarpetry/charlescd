@@ -15,18 +15,20 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { OptionTypeBase } from 'react-select';
 import Styled from './styled';
 import { AreaChart } from 'core/components/Charts';
 import areaChartOption from './areaChart.options';
-import { useMetricQuery } from './hooks';
-import { getDeploySeries } from './helpers';
-import Loader from '../Loaders/index';
+import { useMetricQuery } from '../hooks';
+import { getMetricSeries, filterMetricsSeries } from '../helpers';
+import Loader from '../../Loaders/index';
 
 type Props = {
   metricsGroupId: string;
+  selectFilters: OptionTypeBase[];
 };
 
-const MonitoringMetrics = ({ metricsGroupId }: Props) => {
+const MonitoringMetrics = ({ metricsGroupId, selectFilters }: Props) => {
   const [chartData, setChartData] = useState([]);
   const [chartDataLoading, setChartDataLoading] = useState(true);
   const [period, setPeriod] = useState('1h');
@@ -37,7 +39,7 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
     setChartDataLoading(true);
     getMetricByQuery(metricsGroupId, { period, interval })
       .then(metricByQueryResponse => {
-        const series = getDeploySeries(metricByQueryResponse);
+        const series = getMetricSeries(metricByQueryResponse);
         setChartData(series);
       })
       .finally(() => setChartDataLoading(false));
@@ -80,10 +82,12 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
         isActive={period === '1m'}
         isDisabled={chartDataLoading}
       >
-        Mouth
+        Month
       </Styled.ButtonIconRoundedPeriod>
     </Styled.MonitoringMetricsPeriodFilter>
   );
+
+  // console.log(filterMetricsSeries(chartData, selectFilters));
 
   return (
     <Styled.MonitoringMetricsContent data-testid="monitoring-metrics">
@@ -92,7 +96,7 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
       ) : (
         <AreaChart
           options={areaChartOption}
-          series={chartData}
+          series={filterMetricsSeries(chartData, selectFilters)}
           width={500}
           height={200}
           data-testid="monitoring-metrics-chart"
