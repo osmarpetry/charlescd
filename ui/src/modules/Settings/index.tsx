@@ -14,23 +14,39 @@
  * limitations under the License.
  */
 
-import React, { lazy } from 'react';
+import React, { lazy, useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
+import Modal from 'core/components/Modal';
 import PrivateRoute from 'containers/PrivateRoute';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
+import { useGlobalState } from 'core/state/hooks';
 import Menu from './Menu';
 import { SettingsMenu } from './constants';
+import { getWizardByUser, setWizard } from './helpers';
+import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 
 const Credentials = lazy(() => import('modules/Settings/Credentials'));
 
 const Settings = () => {
   const profileName = getProfileByKey('name');
+  const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
+  const [isVeteranUser, setIsVeteranUser] = useState<boolean>(
+    getWizardByUser()
+  );
 
   return (
     <Page>
+      {!isVeteranUser && workspace.status === WORKSPACE_STATUS.INCOMPLETE && (
+        <Modal.Wizard
+          onClose={() => {
+            setWizard();
+            setIsVeteranUser(true);
+          }}
+        />
+      )}
       <Page.Menu>
         <Menu items={SettingsMenu} />
       </Page.Menu>
