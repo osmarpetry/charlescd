@@ -31,11 +31,14 @@ import Section from './Sections';
 import Loader from './Loaders';
 import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
+import { useDatasource } from './Sections/MetricProvider/hooks';
+import { Datasource } from './Sections/MetricProvider/interfaces';
 
 const Credentials = () => {
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>('');
   const [, loadWorkspace, , updateWorkspace] = useWorkspace();
+  const { responseAll, getAll: getAllDatasources } = useDatasource();
   const { item: workspace, status } = useGlobalState(
     ({ workspaces }) => workspaces
   );
@@ -48,6 +51,7 @@ const Credentials = () => {
   useEffect(() => {
     if (isNull(form)) {
       loadWorkspace(id);
+      getAllDatasources();
     }
   }, [id, form, loadWorkspace]);
 
@@ -117,7 +121,7 @@ const Credentials = () => {
       <Section.MetricProvider
         form={form}
         setForm={setForm}
-        data={workspace.metricConfiguration}
+        data={responseAll as Datasource[]}
       />
     </TabPanel>
   );
@@ -127,8 +131,8 @@ const Credentials = () => {
       {status === 'pending' || isEmpty(workspace.id) ? (
         <Loader.Tab />
       ) : (
-        renderPanel()
-      )}
+          renderPanel()
+        )}
     </Styled.Wrapper>
   );
 };

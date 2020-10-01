@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.metrics.interactor
+import { baseRequest, postRequest, deleteRequest } from './base';
 
-import io.charlescd.moove.metrics.api.response.CircleHealthRepresentation
+const endpoint = '/compass/api/v1';
 
-interface RetrieveCircleComponentsHealthInteractor {
+export const getAllPlugins = () => baseRequest(`${endpoint}/plugins`)
 
-    fun execute(circleId: String, workspaceId: String): CircleHealthRepresentation
-}
+export const getAllDatasources = () => baseRequest(`${endpoint}/datasources`);
+
+export const createDatasource = (datasourcePayload: any) => postRequest(`${endpoint}/datasources`, datasourcePayload)
+
+export const deleteDatasource = (datasourceId: string) => deleteRequest(`${endpoint}/datasources/${datasourceId}`)
