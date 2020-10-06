@@ -92,7 +92,17 @@ export const unauthenticatedRequest = (
   };
   const mergedOptions = defaultsDeep(options, defaultOptions);
   console.log(basePath);
-  console.log(body);
+  if (typeof body === 'object') {
+    // eslint-disable-next-line no-prototype-builtins
+    if (body.hasOwnProperty('requestData')) {
+        basePath = 'http://charlescd-circle-matcher:8080'
+    } else {
+      window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI;
+    }
+  } else {
+    window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI;
+  }
+
   return (options?: RequestInit) =>
     fetch(`${basePath}${url}`, defaultsDeep(mergedOptions, options)).then(
       (response: Response) => {
