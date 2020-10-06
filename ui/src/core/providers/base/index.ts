@@ -56,7 +56,7 @@ declare global {
   }
 }
 
-export const basePath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI;
+export let basePath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI;
 export const authPath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
 
 export const authRequest = (
@@ -95,12 +95,12 @@ export const unauthenticatedRequest = (
   if (typeof body === 'object') {
     // eslint-disable-next-line no-prototype-builtins
     if (body.hasOwnProperty('requestData')) {
-        basePath = 'http://charlescd-circle-matcher:8080'
+      basePath = 'http://charlescd-circle-matcher:8080';
     } else {
-      window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI;
+      basePath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI;
     }
   } else {
-    window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI;
+    basePath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI;
   }
 
   return (options?: RequestInit) =>
