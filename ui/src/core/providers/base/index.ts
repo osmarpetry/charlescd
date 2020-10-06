@@ -91,7 +91,8 @@ export const unauthenticatedRequest = (
     body: isString(body) ? body : JSON.stringify(body)
   };
   const mergedOptions = defaultsDeep(options, defaultOptions);
-
+  console.log(basePath);
+  console.log(body);
   return (options?: RequestInit) =>
     fetch(`${basePath}${url}`, defaultsDeep(mergedOptions, options)).then(
       (response: Response) => {
