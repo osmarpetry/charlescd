@@ -22,7 +22,7 @@ const redirectUri = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_REDIRECT_URI;
 const workspaceId =
   window.CHARLESCD_ENVIRONMENT?.REACT_APP_WORKSPACE_ID || 'UNKNOWN';
 
-const circleMatcherEndpoint = '/charlescd-circle-matcher/identify';
+const circleMatcherEndpoint = '/identify';
 const endpoint = `/auth/realms/${realm}/protocol/openid-connect/token`;
 const headers = {
   'Content-Type': 'application/x-www-form-urlencoded'
