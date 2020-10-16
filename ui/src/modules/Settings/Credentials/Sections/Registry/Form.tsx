@@ -119,6 +119,10 @@ const FormRegistry = ({ onFinish }: Props) => {
     );
   };
 
+  const testConnection = () => {
+    console.log('test connection');
+  };
+
   const renderGCPFields = () => {
     return (
       <>
@@ -138,6 +142,9 @@ const FormRegistry = ({ onFinish }: Props) => {
           control={control}
           theme="monokai"
         />
+        <Button.Default id="test-connection" onClick={testConnection}>
+          Test connection
+        </Button.Default>
       </>
     );
   };
