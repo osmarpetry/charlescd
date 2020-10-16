@@ -40,6 +40,14 @@ const FormRegistry = ({ onFinish }: Props) => {
   const { register, handleSubmit, reset, control } = useForm<Registry>();
   const profileId = getProfileByKey('id');
   const dispatch = useDispatch();
+  const [testConnectionErrorMessage, setTestConnectionErrorMessage] = useState(
+    ''
+  );
+  const [
+    testConnectionSuccessMessage,
+    setTestConnectionSuccessMessage
+  ] = useState('');
+  const [testConnectionLoading, setTestConnectionLoading] = useState(false);
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -119,8 +127,18 @@ const FormRegistry = ({ onFinish }: Props) => {
     );
   };
 
-  const testConnection = () => {
-    console.log('test connection');
+  const testConnection = async () => {
+    // success https://run.mocky.io/v3/ed875c51-58d0-43a3-bd84-516dad9ff1d6
+    // error https://run.mocky.io/v3/c05c6209-e979-4ee8-99f4-d0de8b0fc743
+    // api call
+    setTestConnectionLoading(true);
+    const response = await fetch(
+      'https://run.mocky.io/v3/ed875c51-58d0-43a3-bd84-516dad9ff1d6'
+    );
+    const data = await response.json();
+    setTestConnectionSuccessMessage(data.message);
+    setTestConnectionLoading(false);
+    // show message
   };
 
   const renderGCPFields = () => {
@@ -142,7 +160,21 @@ const FormRegistry = ({ onFinish }: Props) => {
           control={control}
           theme="monokai"
         />
-        <Button.Default id="test-connection" onClick={testConnection}>
+        {testConnectionErrorMessage && (
+          <Styled.Error color="error" data-testid="error-testConnection">
+            {testConnectionErrorMessage}
+          </Styled.Error>
+        )}
+        {testConnectionSuccessMessage && (
+          <Styled.Success data-testid="success-testConnection">
+            {testConnectionSuccessMessage}
+          </Styled.Success>
+        )}
+        <Button.Default
+          id="test-connection"
+          onClick={testConnection}
+          isLoading={testConnectionLoading}
+        >
           Test connection
         </Button.Default>
       </>
@@ -201,6 +233,7 @@ const FormRegistry = ({ onFinish }: Props) => {
         id="submit-registry"
         type="submit"
         isLoading={loadingSave || loadingAdd}
+        isDisabled={testConnectionSuccessMessage == ''}
       >
         Save
       </Button.Default>

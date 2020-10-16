@@ -51,10 +51,21 @@ const Fields = styled.div`
   }
 `;
 
+const Error = styled(TextComponent.h5)`
+  margin-top: 5px;
+`;
+
+const Success = styled(TextComponent.h5)`
+  margin-top: 20px;
+  color: green;
+`;
+
 export default {
   Content,
   Title,
   Subtitle,
   Form,
-  Fields
+  Fields,
+  Error,
+  Success
 };
